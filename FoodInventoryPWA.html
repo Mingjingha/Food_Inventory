@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="食物库存">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#18181b">
+    
+    <!-- iOS Splash Screens -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2318181b;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%233f3f46;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='192' height='192' rx='42' fill='url(%23grad)'/%3E%3Cpath d='M96 40c-8.837 0-16 7.163-16 16v8h-8c-8.837 0-16 7.163-16 16v56c0 8.837 7.163 16 16 16h48c8.837 0 16-7.163 16-16V80c0-8.837-7.163-16-16-16h-8v-8c0-8.837-7.163-16-16-16zm0 12c2.209 0 4 1.791 4 4v12h-8V56c0-2.209 1.791-4 4-4zm-24 28h48c2.209 0 4 1.791 4 4v56c0 2.209-1.791 4-4 4H72c-2.209 0-4-1.791-4-4V84c0-2.209 1.791-4 4-4z' fill='%2310b981'/%3E%3Ccircle cx='84' cy='104' r='6' fill='%23fbbf24'/%3E%3Ccircle cx='108' cy='104' r='6' fill='%23ef4444'/%3E%3Ccircle cx='96' cy='120' r='6' fill='%233b82f6'/%3E%3C/svg%3E">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <title>家庭食物库存管理 Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        [v-cloak] { display: none; }
+        body { font-family: 'Inter', sans-serif; background-color: #f4f4f5; -webkit-tap-highlight-color: transparent; }
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        input, select, button { -webkit-appearance: none; border-radius: 0.75rem; }
+        .auto-backup-badge {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .pwa-install-banner {
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-zinc-100 text-zinc-800">
+<div id="app" v-cloak class="max-w-2xl mx-auto bg-white/80 backdrop-blur-lg min-h-screen shadow-xl relative pb-20">
+    
+    <!-- PWA Install Banner -->
+    <div v-if="showInstallBanner" class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 shadow-lg pwa-install-banner">
+        <div class="max-w-2xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                <div>
+                    <div class="font-bold text-sm">安装到主屏幕</div>
+                    <div class="text-xs text-blue-100">像App一样使用，更快更方便</div>
+                </div>
+            </div>
+            <div class="flex space-x-2">
+                <button @click="installPWA" class="bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-50">
+                    安装
+                </button>
+                <button @click="dismissInstallBanner" class="text-white/80 hover:text-white px-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Offline Indicator -->
+    <div v-if="!isOnline" class="fixed top-0 left-0 right-0 z-40 bg-amber-500 text-white text-center py-2 text-sm font-medium">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414" />
+        </svg>
+        离线模式 - 数据仅保存在本地
+    </div>
+    
+    <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-zinc-200 px-2 py-2" :class="{'mt-16': showInstallBanner}">
+        <div class="flex justify-around rounded-full bg-zinc-100 p-1">
+            <button @click="activeTab = 'inventory'" :class="activeTab === 'inventory' ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500 hover:text-zinc-700'" class="flex-1 py-2 text-center text-xs sm:text-sm font-medium rounded-full transition-all duration-200">库存管理</button>
+            <button @click="activeTab = 'menu'" :class="activeTab === 'menu' ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500 hover:text-zinc-700'" class="flex-1 py-2 text-center text-xs sm:text-sm font-medium rounded-full transition-all duration-200">菜单管理</button>
+            <button @click="activeTab = 'plan'" :class="activeTab === 'plan' ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500 hover:text-zinc-700'" class="flex-1 py-2 text-center text-xs sm:text-sm font-medium rounded-full transition-all duration-200">菜单规划</button>
+            <button @click="activeTab = 'shopping'" :class="activeTab === 'shopping' ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500 hover:text-zinc-700'" class="flex-1 py-2 text-center text-xs sm:text-sm font-medium rounded-full transition-all duration-200">买菜清单</button>
+        </div>
+    </nav>
+
+    <div class="p-4 sm:p-6">
+        
+        <!-- TAB 1: INVENTORY -->
+        <div v-if="activeTab === 'inventory'">
+            <h2 class="text-2xl font-bold mb-6 text-zinc-900 tracking-tight">录入与库存</h2>
+            
+            <div class="bg-zinc-50 p-5 rounded-2xl mb-8 border border-zinc-200/80">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">分类</label>
+                        <select v-model="newItem.category" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 transition">
+                            <option v-for="cat in inventoryCats" :key="cat" :value="cat">{{ cat }}</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">名称</label>
+                        <input v-model="newItem.name" list="itemList" placeholder="输入或选择" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 transition">
+                        <datalist id="itemList">
+                            <option v-for="item in commonItems[newItem.category]" :key="item" :value="item"></option>
+                        </datalist>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">数量与单位</label>
+                        <div class="flex space-x-2">
+                            <input type="number" v-model.number="newItem.quantity" class="flex-1 p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                            <select v-model="newItem.unit" class="w-24 p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                                <option value="只">只</option>
+                                <option value="盒/袋">盒/袋</option>
+                                <option value="磅">磅</option>
+                                <option value="加仑">加仑</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">状态</label>
+                        <select v-model="newItem.state" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                            <option value="新鲜">新鲜</option>
+                            <option value="冷冻">冷冻</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">购买日期</label>
+                        <input type="date" v-model="newItem.purchaseDate" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">保鲜期</label>
+                        <div class="flex space-x-2 items-center">
+                            <input type="number" v-model.number="newItem.shelfLifeValue" class="flex-1 p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                            <select v-model="newItem.shelfLifeUnit" class="w-24 p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                                <option value="days">天</option>
+                                <option value="months">月</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button @click="addItem" class="mt-6 w-full bg-zinc-900 text-white py-3 rounded-xl text-sm font-semibold hover:bg-zinc-800 transition-colors shadow-sm">添加到库存</button>
+            </div>
+
+            <!-- 临期食品提醒 -->
+            <div v-if="expiringSoonItems.length > 0" class="bg-amber-50 p-4 rounded-2xl mb-6 border border-amber-200">
+                <div class="flex items-center mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    <h3 class="font-bold text-amber-900">临期食品提醒</h3>
+                    <span class="ml-2 text-xs text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">{{ expiringSoonItems.length }} 项</span>
+                </div>
+                <div class="space-y-2">
+                    <div v-for="item in expiringSoonItems" :key="item.id" class="bg-white p-3 rounded-xl border border-amber-200 text-sm">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="font-semibold text-zinc-800">{{ item.name }}</span>
+                                <span class="text-xs text-zinc-500 ml-2">({{ item.category }})</span>
+                            </div>
+                            <span class="text-xs font-medium text-amber-700">{{ calculateExpiryDate(item) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div v-for="cat in inventoryCats" :key="cat" class="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+                    <div @click="toggleInventoryCat(cat)" class="flex justify-between items-center p-4 cursor-pointer hover:bg-zinc-50 transition-colors">
+                        <div class="flex items-center">
+                            <span class="w-2 h-2 rounded-full mr-3" :class="getCategoryColor(cat)"></span>
+                            <h3 class="font-bold text-zinc-800">{{ cat }}</h3>
+                            <span class="ml-2 text-xs text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded-full">
+                                {{ inventory.filter(i => i.category === cat).length }}
+                            </span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-zinc-400 transition-transform duration-300" :class="{'rotate-180': expandedInventoryCats.includes(cat)}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    </div>
+                    <transition name="fade">
+                        <div v-if="expandedInventoryCats.includes(cat)" class="border-t border-zinc-100 p-3 space-y-2 bg-zinc-50/50">
+                            <div v-for="item in sortedInventory.filter(i => i.category === cat)" :key="item.id" 
+                                 class="bg-white p-3 rounded-xl border border-zinc-100 shadow-sm relative group"
+                                 :class="{'border-l-4 border-l-red-400': getExpiryStatus(item) === 'expired', 'border-l-4 border-l-amber-400': getExpiryStatus(item) === 'warning'}">
+                                
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h4 class="font-bold text-base text-zinc-900">{{ item.name }} <span class="text-xs text-zinc-400 font-normal">({{ item.state }})</span></h4>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-xl font-bold text-zinc-900">{{ item.quantity }}</div>
+                                        <div class="text-xs text-zinc-400 -mt-1">{{ item.unit }}</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between text-xs text-zinc-500 mb-3">
+                                    <div>购买: {{ item.purchaseDate }}</div>
+                                    <div class="px-2 py-0.5 rounded-full" :class="getExpiryStatusClass(item)">{{ calculateExpiryDate(item) }}</div>
+                                </div>
+
+                                <div class="flex space-x-2">
+                                    <input type="number" :value="item.quantity" @change="updateQuantity(item, $event.target.value)" class="flex-1 p-2 border border-zinc-200 rounded-lg text-sm text-center focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                                    <button @click="deleteItem(item.id)" class="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100 transition-colors">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </transition>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: MENU -->
+        <div v-if="activeTab === 'menu'">
+            <h2 class="text-2xl font-bold mb-6 text-zinc-900 tracking-tight">菜品管理</h2>
+            
+            <div class="bg-zinc-50 p-5 rounded-2xl mb-8 border border-zinc-200/80">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">菜品名称</label>
+                        <input v-model="newDish.name" placeholder="输入菜品名称" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">主要食材 (从库存选择)</label>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            <span v-for="ing in newDish.ingredients" :key="ing" 
+                                  class="inline-flex items-center bg-white border border-zinc-200 rounded-lg px-3 py-1 text-sm">
+                                {{ ing }}
+                                <button @click="removeIngredient(ing)" class="ml-2 text-red-500 hover:text-red-700">&times;</button>
+                            </span>
+                        </div>
+                        <select v-model="tempIngredient" @change="addIngredient" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                            <option value="">选择食材...</option>
+                            <option v-for="item in inventory" :key="item.id" :value="item.name">{{ item.name }} ({{ item.category }})</option>
+                        </select>
+                    </div>
+                </div>
+                <button @click="addDish" class="mt-6 w-full bg-zinc-900 text-white py-3 rounded-xl text-sm font-semibold hover:bg-zinc-800 transition-colors shadow-sm">添加菜品</button>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3">
+                <div v-for="dish in dishes" :key="dish.id" class="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="font-bold text-lg text-zinc-900">{{ dish.name }}</h3>
+                        <button @click="deleteDish(dish.id)" class="text-red-500 hover:text-red-700 text-sm">删除</button>
+                    </div>
+                    <div class="flex flex-wrap gap-1.5">
+                        <span v-for="ing in dish.ingredients" :key="ing" 
+                              class="text-xs px-2.5 py-1 rounded-full"
+                              :class="isIngredientAvailable(ing) ? 'bg-green-100 text-green-700' : 'bg-zinc-100 text-zinc-500'">
+                            {{ ing }} {{ isIngredientAvailable(ing) ? '✓' : '✗' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: PLAN -->
+        <div v-if="activeTab === 'plan'">
+            <h2 class="text-2xl font-bold mb-6 text-zinc-900 tracking-tight">菜单规划</h2>
+            
+            <div class="space-y-6">
+                <!-- 本周 -->
+                <div class="bg-white p-5 rounded-2xl border border-zinc-100 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-lg text-zinc-900">本周菜单</h3>
+                        <span class="text-xs text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">{{ weeklyPlan.thisWeek.length }} 道菜</span>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <select v-model="selectedDishForThisWeek" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                            <option value="">选择菜品添加到本周...</option>
+                            <option v-for="dish in availableDishesForThisWeek" :key="dish.id" :value="dish.id">
+                                {{ dish.name }} ({{ dish.ingredients.filter(i => isIngredientAvailable(i)).length }}/{{ dish.ingredients.length }} 食材可用)
+                            </option>
+                        </select>
+                        <button @click="addToThisWeek" :disabled="!selectedDishForThisWeek" 
+                                class="mt-2 w-full py-2 bg-zinc-900 text-white rounded-xl text-sm font-medium disabled:bg-zinc-300 disabled:cursor-not-allowed">
+                            添加到本周
+                        </button>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div v-for="(dishId, index) in weeklyPlan.thisWeek" :key="dishId" class="flex items-center justify-between bg-zinc-50 p-3 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-xs font-bold text-zinc-400">{{ index + 1 }}</span>
+                                <span class="font-medium text-zinc-800">{{ getDishName(dishId) }}</span>
+                            </div>
+                            <button @click="removeFromPlan('thisWeek', dishId)" class="text-red-500 hover:text-red-700 text-sm">移除</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 下周 -->
+                <div class="bg-white p-5 rounded-2xl border border-zinc-100 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-lg text-zinc-900">下周菜单</h3>
+                        <span class="text-xs text-zinc-500 bg-zinc-100 px-2 py-1 rounded-full">{{ weeklyPlan.nextWeek.length }} 道菜</span>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <select v-model="selectedDishForNextWeek" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                            <option value="">选择菜品添加到下周...</option>
+                            <option v-for="dish in availableDishesForNextWeek" :key="dish.id" :value="dish.id">{{ dish.name }}</option>
+                        </select>
+                        <button @click="addToNextWeek" :disabled="!selectedDishForNextWeek" 
+                                class="mt-2 w-full py-2 bg-zinc-900 text-white rounded-xl text-sm font-medium disabled:bg-zinc-300 disabled:cursor-not-allowed">
+                            添加到下周
+                        </button>
+                    </div>
+
+                    <div class="space-y-2">
+                        <div v-for="(dishId, index) in weeklyPlan.nextWeek" :key="dishId" class="flex items-center justify-between bg-zinc-50 p-3 rounded-xl">
+                            <div class="flex items-center space-x-3">
+                                <span class="text-xs font-bold text-zinc-400">{{ index + 1 }}</span>
+                                <span class="font-medium text-zinc-800">{{ getDishName(dishId) }}</span>
+                            </div>
+                            <button @click="removeFromPlan('nextWeek', dishId)" class="text-red-500 hover:text-red-700 text-sm">移除</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button @click="generateShoppingList" class="w-full py-3 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm">
+                    生成买菜清单
+                </button>
+            </div>
+        </div>
+
+        <!-- TAB 4: SHOPPING -->
+        <div v-if="activeTab === 'shopping'">
+            <h2 class="text-2xl font-bold mb-6 text-zinc-900 tracking-tight">买菜清单</h2>
+
+            <!-- 需要购买 -->
+            <div class="bg-white p-5 rounded-2xl mb-6 border border-zinc-100 shadow-sm">
+                <h3 class="font-bold text-lg text-zinc-900 mb-4">需要购买</h3>
+                <div v-if="toBuyList.length === 0" class="text-center text-zinc-400 py-4">暂无需要购买的商品</div>
+                <div v-else class="space-y-2">
+                    <div v-for="item in toBuyList" :key="item.id" class="flex items-center justify-between bg-zinc-50 p-3 rounded-xl">
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox" :id="'buy-' + item.id" @change="markAsBought(item)" class="w-5 h-5 rounded border-zinc-300">
+                            <label :for="'buy-' + item.id" class="font-medium text-zinc-800">{{ item.name }}</label>
+                            <span class="text-xs text-zinc-400">{{ item.category }}</span>
+                        </div>
+                        <button @click="removeFromToBuy(item.id)" class="text-red-500 hover:text-red-700 text-sm">移除</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 今天已买 -->
+            <div class="bg-green-50 p-5 rounded-2xl border border-green-200">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-lg text-green-900">今天已买</h3>
+                    <button v-if="todayBuyList.length > 0" @click="clearTodayList" class="text-xs text-green-700 hover:text-green-900">清空</button>
+                </div>
+                <div v-if="todayBuyList.length === 0" class="text-center text-green-600/50 py-4">今天还没有购买记录</div>
+                <div v-else class="space-y-2">
+                    <div v-for="item in todayBuyList" :key="item.id" class="flex items-center justify-between bg-white p-3 rounded-xl border border-green-200">
+                        <div>
+                            <span class="font-medium text-zinc-800">{{ item.name }}</span>
+                            <span class="text-xs text-zinc-400 ml-2">{{ item.category }}</span>
+                        </div>
+                        <span class="text-xs text-green-600">✓ {{ item.boughtAt }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 悬浮数据管理按钮 -->
+    <button @click="showDataMenu = !showDataMenu" 
+            class="fixed bottom-6 right-6 w-14 h-14 bg-zinc-900 text-white rounded-full shadow-2xl hover:bg-zinc-800 transition-all duration-300 flex items-center justify-center z-50"
+            :class="{'scale-110': showDataMenu}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+        </svg>
+    </button>
+
+    <!-- PWA 状态指示器 -->
+    <div v-if="isPWA" class="fixed bottom-24 right-6 bg-green-500 text-white text-xs px-3 py-1.5 rounded-full shadow-lg flex items-center space-x-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>PWA模式</span>
+    </div>
+
+    <!-- 自动备份指示器 -->
+    <div v-if="autoBackupEnabled" class="fixed bottom-36 right-6 bg-blue-500 text-white text-xs px-3 py-1.5 rounded-full shadow-lg flex items-center space-x-1 auto-backup-badge">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+        </svg>
+        <span>自动备份</span>
+    </div>
+
+    <!-- 数据管理菜单 -->
+    <transition name="fade">
+        <div v-if="showDataMenu" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 flex items-end sm:items-center justify-center p-4" @click.self="showDataMenu = false">
+            <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden" @click.stop>
+                <div class="bg-gradient-to-br from-zinc-900 to-zinc-700 p-6 text-white">
+                    <h3 class="text-2xl font-bold mb-2">数据管理</h3>
+                    <p class="text-sm text-zinc-300">导出、导入和管理您的数据</p>
+                </div>
+                
+                <div class="p-6 space-y-3">
+                    <!-- PWA状态 -->
+                    <div v-if="isPWA" class="bg-green-50 p-4 rounded-2xl border border-green-200">
+                        <div class="flex items-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <span class="font-semibold text-green-900 text-sm">已安装为PWA应用</span>
+                        </div>
+                        <p class="text-xs text-green-700 mt-1">支持离线使用，数据本地存储</p>
+                    </div>
+
+                    <!-- 自动备份设置 -->
+                    <div class="bg-blue-50 p-4 rounded-2xl border border-blue-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                                </svg>
+                                <span class="font-semibold text-blue-900 text-sm">自动备份到iCloud</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" v-model="autoBackupEnabled" class="sr-only peer" @change="toggleAutoBackup">
+                                <div class="w-11 h-6 bg-zinc-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <p class="text-xs text-blue-700">{{ autoBackupEnabled ? '每5分钟自动导出备份文件' : '手动管理备份' }}</p>
+                        <p v-if="lastBackupTime" class="text-xs text-blue-600 mt-1">上次备份: {{ lastBackupTime }}</p>
+                    </div>
+
+                    <!-- 导出按钮 -->
+                    <button @click="exportToFile" class="w-full flex items-center justify-center space-x-2 py-3 bg-zinc-900 text-white rounded-2xl font-semibold hover:bg-zinc-800 transition-colors shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span>导出到文件</span>
+                    </button>
+
+                    <!-- 导入按钮 -->
+                    <label class="w-full flex items-center justify-center space-x-2 py-3 bg-blue-600 text-white rounded-2xl font-semibold hover:bg-blue-700 transition-colors shadow-sm cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        <span>从文件导入</span>
+                        <input type="file" accept=".json" @change="importFromFile" class="hidden">
+                    </label>
+
+                    <!-- 数据统计 -->
+                    <div class="bg-zinc-50 p-4 rounded-2xl border border-zinc-200">
+                        <div class="text-xs text-zinc-500 mb-2 font-semibold">当前数据</div>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-zinc-600">库存:</span>
+                                <span class="font-bold text-zinc-900">{{ inventory.length }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-zinc-600">菜品:</span>
+                                <span class="font-bold text-zinc-900">{{ dishes.length }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-zinc-600">本周:</span>
+                                <span class="font-bold text-zinc-900">{{ weeklyPlan.thisWeek.length }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-zinc-600">下周:</span>
+                                <span class="font-bold text-zinc-900">{{ weeklyPlan.nextWeek.length }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 危险操作 -->
+                    <button @click="clearAllData" class="w-full py-3 bg-red-50 text-red-600 rounded-2xl font-semibold hover:bg-red-100 transition-colors border border-red-200">
+                        清空所有数据
+                    </button>
+
+                    <button @click="showDataMenu = false" class="w-full py-3 bg-zinc-100 text-zinc-700 rounded-2xl font-semibold hover:bg-zinc-200 transition-colors">
+                        关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </transition>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            activeTab: 'inventory',
+            showDataMenu: false,
+            autoBackupEnabled: false,
+            lastBackupTime: null,
+            autoBackupInterval: null,
+            
+            // PWA related
+            isPWA: false,
+            isOnline: navigator.onLine,
+            showInstallBanner: false,
+            deferredPrompt: null,
+            
+            inventoryCats: ['蔬菜', '肉类', '海鲜', '主食', '水果', '调料', '饮品', '零食', '其他'],
+            expandedInventoryCats: [],
+            
+            inventory: [],
+            dishes: [],
+            weeklyPlan: { thisWeek: [], nextWeek: [] },
+            history: [],
+            shoppingList: [],
+            toBuyList: [],
+            todayBuyList: [],
+            
+            newItem: {
+                category: '蔬菜',
+                name: '',
+                quantity: 1,
+                unit: '只',
+                state: '新鲜',
+                purchaseDate: new Date().toISOString().split('T')[0],
+                shelfLifeValue: 7,
+                shelfLifeUnit: 'days'
+            },
+            
+            newDish: {
+                name: '',
+                ingredients: []
+            },
+            tempIngredient: '',
+            
+            selectedDishForThisWeek: '',
+            selectedDishForNextWeek: '',
+            
+            commonItems: {
+                '蔬菜': ['白菜', '西兰花', '菠菜', '生菜', '番茄', '黄瓜', '胡萝卜', '土豆', '洋葱', '大蒜', '生姜', '青椒', '茄子', '豆角', '芹菜'],
+                '肉类': ['鸡胸肉', '鸡腿', '牛肉', '猪肉', '羊肉', '培根', '香肠'],
+                '海鲜': ['三文鱼', '虾', '螃蟹', '鱿鱼', '扇贝', '鱼片'],
+                '主食': ['米饭', '面条', '面包', '馒头', '饺子', '意大利面'],
+                '水果': ['苹果', '香蕉', '橙子', '葡萄', '草莓', '西瓜', '梨', '桃子'],
+                '调料': ['盐', '酱油', '醋', '糖', '料酒', '蚝油', '香油', '辣椒油'],
+                '饮品': ['牛奶', '酸奶', '果汁', '茶', '咖啡', '可乐'],
+                '零食': ['饼干', '薯片', '巧克力', '糖果', '坚果'],
+                '其他': []
+            }
+        };
+    },
+    computed: {
+        sortedInventory() {
+            return [...this.inventory].sort((a, b) => {
+                const dateA = new Date(a.purchaseDate);
+                const dateB = new Date(b.purchaseDate);
+                return dateA - dateB;
+            });
+        },
+        expiringSoonItems() {
+            const today = new Date();
+            return this.inventory.filter(item => {
+                const expiryDate = this.getExpiryDateObj(item);
+                const daysLeft = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+                return daysLeft <= 3 && daysLeft > 0;
+            });
+        },
+        availableDishesForThisWeek() {
+            return this.dishes.filter(d => !this.weeklyPlan.thisWeek.includes(d.id));
+        },
+        availableDishesForNextWeek() {
+            return this.dishes.filter(d => !this.weeklyPlan.nextWeek.includes(d.id));
+        }
+    },
+    methods: {
+        // === PWA相关方法 ===
+        checkPWAMode() {
+            // 检查是否在PWA模式下运行
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+                this.isPWA = true;
+                console.log('✅ 运行在PWA模式');
+            }
+        },
+        
+        setupPWAInstallPrompt() {
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                this.deferredPrompt = e;
+                // 显示安装横幅
+                const dismissed = localStorage.getItem('pwa_install_dismissed');
+                if (!dismissed && !this.isPWA) {
+                    this.showInstallBanner = true;
+                }
+            });
+            
+            // 监听安装完成
+            window.addEventListener('appinstalled', () => {
+                console.log('✅ PWA已安装');
+                this.isPWA = true;
+                this.showInstallBanner = false;
+                this.deferredPrompt = null;
+            });
+        },
+        
+        async installPWA() {
+            if (!this.deferredPrompt) {
+                alert('❌ 您的浏览器不支持PWA安装\n\n请在Safari中：\n1. 点击分享按钮\n2. 选择"添加到主屏幕"');
+                return;
+            }
+            
+            this.deferredPrompt.prompt();
+            const { outcome } = await this.deferredPrompt.userChoice;
+            
+            if (outcome === 'accepted') {
+                console.log('✅ 用户接受了安装');
+            }
+            
+            this.deferredPrompt = null;
+            this.showInstallBanner = false;
+        },
+        
+        dismissInstallBanner() {
+            this.showInstallBanner = false;
+            localStorage.setItem('pwa_install_dismissed', 'true');
+        },
+        
+        setupOnlineOfflineDetection() {
+            window.addEventListener('online', () => {
+                this.isOnline = true;
+                console.log('✅ 网络已连接');
+            });
+            
+            window.addEventListener('offline', () => {
+                this.isOnline = false;
+                console.log('❌ 网络已断开');
+            });
+        },
+        
+        // === 数据持久化方法 ===
+        saveData() {
+            try {
+                localStorage.setItem('food_inventory', JSON.stringify(this.inventory));
+                localStorage.setItem('food_dishes', JSON.stringify(this.dishes));
+                localStorage.setItem('food_weekly_plan', JSON.stringify(this.weeklyPlan));
+                localStorage.setItem('food_history', JSON.stringify(this.history));
+                localStorage.setItem('food_shopping', JSON.stringify(this.shoppingList));
+                localStorage.setItem('food_tobuy', JSON.stringify(this.toBuyList));
+                localStorage.setItem('food_today_buy', JSON.stringify(this.todayBuyList));
+                console.log('✅ 数据已自动保存到本地');
+            } catch (err) {
+                console.error('保存数据失败:', err);
+            }
+        },
+        
+        loadData() {
+            const keys = ['inventory', 'dishes', 'weeklyPlan', 'history', 'shoppingList', 'toBuyList', 'todayBuyList'];
+            const storageKeys = ['inventory', 'dishes', 'weekly_plan', 'history', 'shopping', 'tobuy', 'today_buy'];
+            
+            keys.forEach((key, index) => {
+                const fullKey = `food_${storageKeys[index]}`;
+                const saved = localStorage.getItem(fullKey);
+                if (saved) {
+                    try {
+                        this[key] = JSON.parse(saved);
+                    } catch (e) {
+                        console.error(`加载 ${key} 失败:`, e);
+                    }
+                }
+            });
+            
+            // 加载自动备份设置
+            const autoBackup = localStorage.getItem('food_auto_backup');
+            if (autoBackup) {
+                this.autoBackupEnabled = JSON.parse(autoBackup);
+                if (this.autoBackupEnabled) {
+                    this.startAutoBackup();
+                }
+            }
+            
+            const lastBackup = localStorage.getItem('food_last_backup');
+            if (lastBackup) {
+                this.lastBackupTime = lastBackup;
+            }
+            
+            console.log('✅ 数据已从本地加载');
+        },
+        
+        // === 导出到文件（固定文件名）===
+        exportToFile() {
+            const data = {
+                version: '1.0',
+                exportDate: new Date().toISOString(),
+                inventory: this.inventory,
+                dishes: this.dishes,
+                weeklyPlan: this.weeklyPlan,
+                history: this.history,
+                shoppingList: this.shoppingList,
+                toBuyList: this.toBuyList,
+                todayBuyList: this.todayBuyList
+            };
+            
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            // 固定文件名
+            const filename = 'food_inventory_backup.json';
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // 更新最后备份时间
+            this.lastBackupTime = new Date().toLocaleString('zh-CN');
+            localStorage.setItem('food_last_backup', this.lastBackupTime);
+            
+            this.showDataMenu = false;
+            
+            alert(`✅ 导出成功！\n\n文件名: ${filename}\n\n请将文件保存到 iCloud Drive 的固定位置。\n\n导出内容：\n• 库存: ${this.inventory.length} 项\n• 菜品: ${this.dishes.length} 个\n• 本周菜单: ${this.weeklyPlan.thisWeek.length} 个\n• 下周菜单: ${this.weeklyPlan.nextWeek.length} 个`);
+        },
+        
+        // === 从文件导入 ===
+        importFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.json')) {
+                alert('❌ 请选择 .json 格式的备份文件');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    this.processImportData(data);
+                } catch (err) {
+                    console.error('导入错误:', err);
+                    alert('❌ 导入失败：文件格式不正确\n\n请确保选择的是正确的备份文件。');
+                }
+            };
+            reader.readAsText(file);
+            
+            // 重置文件选择器
+            event.target.value = '';
+        },
+        
+        processImportData(data) {
+            try {
+                let imported = 0;
+                
+                if (data.inventory) {
+                    this.inventory = data.inventory;
+                    imported++;
+                }
+                if (data.dishes) {
+                    this.dishes = data.dishes;
+                    imported++;
+                }
+                if (data.shoppingList) {
+                    this.shoppingList = data.shoppingList;
+                    imported++;
+                }
+                if (data.toBuyList) {
+                    this.toBuyList = data.toBuyList;
+                    imported++;
+                }
+                if (data.todayBuyList) {
+                    this.todayBuyList = data.todayBuyList;
+                    imported++;
+                }
+                if (data.history) {
+                    this.history = data.history;
+                    imported++;
+                }
+                if (data.weeklyPlan) {
+                    this.weeklyPlan = data.weeklyPlan;
+                    imported++;
+                }
+                
+                this.saveData();
+                this.showDataMenu = false;
+                
+                const exportDate = data.exportDate ? new Date(data.exportDate).toLocaleString('zh-CN') : '未知';
+                alert(`✅ 导入成功！\n\n导入了 ${imported} 个数据类别\n备份时间: ${exportDate}\n\n数据已恢复：\n• 库存: ${this.inventory.length} 项\n• 菜品: ${this.dishes.length} 个\n• 清单: ${this.shoppingList.length} 项\n• 本周菜单: ${this.weeklyPlan.thisWeek.length} 个\n• 下周菜单: ${this.weeklyPlan.nextWeek.length} 个`);
+            } catch (err) {
+                console.error('处理数据失败:', err);
+                alert('❌ 数据处理失败：' + err.message);
+            }
+        },
+        
+        // === 自动备份功能 ===
+        toggleAutoBackup() {
+            localStorage.setItem('food_auto_backup', JSON.stringify(this.autoBackupEnabled));
+            
+            if (this.autoBackupEnabled) {
+                this.startAutoBackup();
+                alert('✅ 自动备份已启用\n\n每5分钟会自动导出备份文件。\n请将导出的文件保存到 iCloud Drive 的同一位置。');
+            } else {
+                this.stopAutoBackup();
+                alert('❌ 自动备份已关闭');
+            }
+        },
+        
+        startAutoBackup() {
+            if (this.autoBackupInterval) {
+                clearInterval(this.autoBackupInterval);
+            }
+            
+            this.autoBackupInterval = setInterval(() => {
+                this.exportToFile();
+                console.log('🔄 自动备份执行');
+            }, 5 * 60 * 1000);
+            
+            console.log('✅ 自动备份已启动（每5分钟）');
+        },
+        
+        stopAutoBackup() {
+            if (this.autoBackupInterval) {
+                clearInterval(this.autoBackupInterval);
+                this.autoBackupInterval = null;
+                console.log('❌ 自动备份已停止');
+            }
+        },
+        
+        clearAllData() {
+            if (confirm("⚠️ 确定要清空所有数据吗？\n\n此操作不可恢复！\n建议先导出备份。")) {
+                if (confirm("🚨 最后确认：真的要清空所有数据吗？")) {
+                    localStorage.clear();
+                    this.inventory = [];
+                    this.dishes = [];
+                    this.shoppingList = [];
+                    this.toBuyList = [];
+                    this.todayBuyList = [];
+                    this.history = [];
+                    this.weeklyPlan = { thisWeek: [], nextWeek: [] };
+                    this.autoBackupEnabled = false;
+                    this.lastBackupTime = null;
+                    this.stopAutoBackup();
+                    this.showDataMenu = false;
+                    alert("✅ 所有数据已清空");
+                }
+            }
+        },
+        
+        // === 库存管理 ===
+        addItem() {
+            if (!this.newItem.name.trim()) {
+                alert('请输入食物名称');
+                return;
+            }
+            
+            const item = {
+                id: Date.now(),
+                ...this.newItem,
+                addedAt: new Date().toISOString()
+            };
+            
+            this.inventory.push(item);
+            this.saveData();
+            
+            // 重置表单
+            this.newItem = {
+                category: '蔬菜',
+                name: '',
+                quantity: 1,
+                unit: '只',
+                state: '新鲜',
+                purchaseDate: new Date().toISOString().split('T')[0],
+                shelfLifeValue: 7,
+                shelfLifeUnit: 'days'
+            };
+        },
+        
+        deleteItem(id) {
+            if (confirm('确定删除此项吗？')) {
+                this.inventory = this.inventory.filter(i => i.id !== id);
+                this.saveData();
+            }
+        },
+        
+        updateQuantity(item, newQuantity) {
+            item.quantity = parseFloat(newQuantity) || 0;
+            this.saveData();
+        },
+        
+        toggleInventoryCat(cat) {
+            const index = this.expandedInventoryCats.indexOf(cat);
+            if (index > -1) {
+                this.expandedInventoryCats.splice(index, 1);
+            } else {
+                this.expandedInventoryCats.push(cat);
+            }
+        },
+        
+        getCategoryColor(cat) {
+            const colors = {
+                '蔬菜': 'bg-green-500',
+                '肉类': 'bg-red-500',
+                '海鲜': 'bg-blue-500',
+                '主食': 'bg-yellow-500',
+                '水果': 'bg-pink-500',
+                '调料': 'bg-orange-500',
+                '饮品': 'bg-purple-500',
+                '零食': 'bg-indigo-500',
+                '其他': 'bg-zinc-400'
+            };
+            return colors[cat] || 'bg-zinc-400';
+        },
+        
+        // === 日期相关 ===
+        getExpiryDateObj(item) {
+            const purchaseDate = new Date(item.purchaseDate);
+            const expiryDate = new Date(purchaseDate);
+            
+            if (item.shelfLifeUnit === 'days') {
+                expiryDate.setDate(expiryDate.getDate() + item.shelfLifeValue);
+            } else if (item.shelfLifeUnit === 'months') {
+                expiryDate.setMonth(expiryDate.getMonth() + item.shelfLifeValue);
+            }
+            
+            return expiryDate;
+        },
+        
+        calculateExpiryDate(item) {
+            const expiryDate = this.getExpiryDateObj(item);
+            const today = new Date();
+            const daysLeft = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+            
+            if (daysLeft < 0) {
+                return `已过期 ${Math.abs(daysLeft)} 天`;
+            } else if (daysLeft === 0) {
+                return '今天到期';
+            } else if (daysLeft === 1) {
+                return '明天到期';
+            } else {
+                return `${daysLeft} 天后到期`;
+            }
+        },
+        
+        getExpiryStatus(item) {
+            const expiryDate = this.getExpiryDateObj(item);
+            const today = new Date();
+            const daysLeft = Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24));
+            
+            if (daysLeft < 0) return 'expired';
+            if (daysLeft <= 3) return 'warning';
+            return 'fresh';
+        },
+        
+        getExpiryStatusClass(item) {
+            const status = this.getExpiryStatus(item);
+            if (status === 'expired') return 'bg-red-100 text-red-700';
+            if (status === 'warning') return 'bg-amber-100 text-amber-700';
+            return 'bg-zinc-100 text-zinc-500';
+        },
+        
+        // === 菜品管理 ===
+        addDish() {
+            if (!this.newDish.name.trim()) {
+                alert('请输入菜品名称');
+                return;
+            }
+            if (this.newDish.ingredients.length === 0) {
+                alert('请至少选择一种食材');
+                return;
+            }
+            
+            const dish = {
+                id: Date.now(),
+                name: this.newDish.name,
+                ingredients: [...this.newDish.ingredients]
+            };
+            
+            this.dishes.push(dish);
+            this.saveData();
+            
+            this.newDish = { name: '', ingredients: [] };
+        },
+        
+        deleteDish(id) {
+            if (confirm('确定删除此菜品吗？')) {
+                this.dishes = this.dishes.filter(d => d.id !== id);
+                this.saveData();
+            }
+        },
+        
+        addIngredient() {
+            if (this.tempIngredient && !this.newDish.ingredients.includes(this.tempIngredient)) {
+                this.newDish.ingredients.push(this.tempIngredient);
+            }
+            this.tempIngredient = '';
+        },
+        
+        removeIngredient(ing) {
+            this.newDish.ingredients = this.newDish.ingredients.filter(i => i !== ing);
+        },
+        
+        isIngredientAvailable(ingredientName) {
+            return this.inventory.some(item => item.name === ingredientName && item.quantity > 0);
+        },
+        
+        // === 菜单规划 ===
+        getDishName(dishId) {
+            const dish = this.dishes.find(d => d.id === dishId);
+            return dish ? dish.name : '未知菜品';
+        },
+        
+        addToThisWeek() {
+            if (this.selectedDishForThisWeek) {
+                this.weeklyPlan.thisWeek.push(this.selectedDishForThisWeek);
+                this.saveData();
+                this.selectedDishForThisWeek = '';
+            }
+        },
+        
+        addToNextWeek() {
+            if (this.selectedDishForNextWeek) {
+                this.weeklyPlan.nextWeek.push(this.selectedDishForNextWeek);
+                this.saveData();
+                this.selectedDishForNextWeek = '';
+            }
+        },
+        
+        removeFromPlan(week, dishId) {
+            this.weeklyPlan[week] = this.weeklyPlan[week].filter(id => id !== dishId);
+            this.saveData();
+        },
+        
+        generateShoppingList() {
+            const allDishes = [
+                ...this.weeklyPlan.thisWeek.map(id => this.dishes.find(d => d.id === id)),
+                ...this.weeklyPlan.nextWeek.map(id => this.dishes.find(d => d.id === id))
+            ].filter(Boolean);
+            
+            const neededIngredients = new Set();
+            allDishes.forEach(dish => {
+                dish.ingredients.forEach(ing => {
+                    if (!this.isIngredientAvailable(ing)) {
+                        neededIngredients.add(ing);
+                    }
+                });
+            });
+            
+            this.toBuyList = Array.from(neededIngredients).map(name => ({
+                id: Date.now() + Math.random(),
+                name,
+                category: this.guessCategory(name)
+            }));
+            
+            this.saveData();
+            this.activeTab = 'shopping';
+            alert(`✅ 已生成买菜清单\n共 ${this.toBuyList.length} 项需要购买`);
+        },
+        
+        guessCategory(name) {
+            for (let cat in this.commonItems) {
+                if (this.commonItems[cat].includes(name)) {
+                    return cat;
+                }
+            }
+            return '其他';
+        },
+        
+        // === 购物清单 ===
+        markAsBought(item) {
+            this.todayBuyList.push({
+                ...item,
+                boughtAt: new Date().toLocaleTimeString('zh-CN')
+            });
+            this.removeFromToBuy(item.id);
+        },
+        
+        removeFromToBuy(id) {
+            this.toBuyList = this.toBuyList.filter(i => i.id !== id);
+            this.saveData();
+        },
+        
+        clearTodayList() {
+            if (confirm('确定清空今天已买列表吗？')) {
+                this.todayBuyList = [];
+                this.saveData();
+            }
+        }
+    },
+    
+    mounted() {
+        // 初始化PWA功能
+        this.checkPWAMode();
+        this.setupPWAInstallPrompt();
+        this.setupOnlineOfflineDetection();
+        
+        // 加载数据
+        this.loadData();
+        console.log('✅ 应用已加载');
+        
+        // 监听页面关闭/刷新
+        window.addEventListener('beforeunload', () => {
+            this.saveData();
+        });
+        
+        // iPad优化：监听页面可见性
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this.saveData();
+                console.log('📱 应用进入后台，数据已保存');
+            } else {
+                this.loadData();
+                console.log('📱 应用返回前台，数据已加载');
+            }
+        });
+        
+        // 定期自动保存（每30秒）
+        setInterval(() => {
+            this.saveData();
+        }, 30000);
+        
+        // 注册Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('✅ Service Worker 注册成功:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('❌ Service Worker 注册失败:', error);
+                });
+        }
+    },
+    
+    beforeUnmount() {
+        this.stopAutoBackup();
+        this.saveData();
+    }
+}).mount('#app');
+</script>
+</body>
+</html>

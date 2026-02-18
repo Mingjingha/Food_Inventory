@@ -1,0 +1,33 @@
+{
+  "name": "家庭食物库存管理 Pro",
+  "short_name": "食物库存",
+  "description": "家庭食物库存、菜单规划和购物清单管理系统",
+  "start_url": "./FoodInventoryPWA.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#18181b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2318181b;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%233f3f46;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='192' height='192' rx='42' fill='url(%23grad)'/%3E%3Cpath d='M96 40c-8.837 0-16 7.163-16 16v8h-8c-8.837 0-16 7.163-16 16v56c0 8.837 7.163 16 16 16h48c8.837 0 16-7.163 16-16V80c0-8.837-7.163-16-16-16h-8v-8c0-8.837-7.163-16-16-16zm0 12c2.209 0 4 1.791 4 4v12h-8V56c0-2.209 1.791-4 4-4zm-24 28h48c2.209 0 4 1.791 4 4v56c0 2.209-1.791 4-4 4H72c-2.209 0-4-1.791-4-4V84c0-2.209 1.791-4 4-4z' fill='%2310b981'/%3E%3Ccircle cx='84' cy='104' r='6' fill='%23fbbf24'/%3E%3Ccircle cx='108' cy='104' r='6' fill='%23ef4444'/%3E%3Ccircle cx='96' cy='120' r='6' fill='%233b82f6'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%2318181b;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%233f3f46;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='512' height='512' rx='112' fill='url(%23grad)'/%3E%3Cpath d='M256 106c-23.558 0-42.667 19.108-42.667 42.667v21.333h-21.333c-23.558 0-42.667 19.108-42.667 42.667v149.333c0 23.558 19.108 42.667 42.667 42.667h128c23.558 0 42.667-19.108 42.667-42.667V212.667c0-23.558-19.108-42.667-42.667-42.667h-21.333v-21.333c0-23.558-19.108-42.667-42.667-42.667zm0 32c5.891 0 10.667 4.776 10.667 10.667v32h-21.333v-32c0-5.891 4.776-10.667 10.667-10.667zm-64 74.667h128c5.891 0 10.667 4.776 10.667 10.667v149.333c0 5.891-4.776 10.667-10.667 10.667H192c-5.891 0-10.667-4.776-10.667-10.667V223.333c0-5.891 4.776-10.667 10.667-10.667z' fill='%2310b981'/%3E%3Ccircle cx='224' cy='277' r='16' fill='%23fbbf24'/%3E%3Ccircle cx='288' cy='277' r='16' fill='%23ef4444'/%3E%3Ccircle cx='256' cy='320' r='16' fill='%233b82f6'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "utilities", "lifestyle"],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 540 720'%3E%3Crect width='540' height='720' fill='%23f4f4f5'/%3E%3Ctext x='270' y='360' font-family='Arial' font-size='24' fill='%2318181b' text-anchor='middle'%3E食物库存管理%3C/text%3E%3C/svg%3E",
+      "sizes": "540x720",
+      "type": "image/svg+xml",
+      "form_factor": "narrow"
+    }
+  ]
+}

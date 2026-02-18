@@ -1,0 +1,1141 @@
+{
+  "inventory": [
+    {
+      "id": 1771118899122,
+      "category": "海鲜",
+      "name": "虾",
+      "quantity": 3,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771119011844,
+      "category": "肉类",
+      "name": "牛腱",
+      "quantity": 3,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771119050590,
+      "category": "肉类",
+      "name": "羊肉块",
+      "quantity": 2,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771119202840,
+      "category": "肉类",
+      "name": "小羊排",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771119498809,
+      "category": "奶蛋粮",
+      "name": "牛奶",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 7,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771119548435,
+      "category": "早餐",
+      "name": "包子",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120027514,
+      "category": "蔬菜",
+      "name": "土豆",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 1,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120325803,
+      "category": "奶蛋粮",
+      "name": "馍",
+      "quantity": 2,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120347112,
+      "category": "奶蛋粮",
+      "name": "鸡蛋",
+      "quantity": 20,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 1,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120398592,
+      "category": "自制预制菜",
+      "name": "红烧牛肉",
+      "quantity": 6,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 1,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120417391,
+      "category": "自制预制菜",
+      "name": "盐酥鸡",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 2,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120451054,
+      "category": "自制预制菜",
+      "name": "烤鸡翅",
+      "quantity": 2,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 2,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120583448,
+      "category": "奶蛋粮",
+      "name": "葱油饼",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 2,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120595844,
+      "category": "奶蛋粮",
+      "name": "馍",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 2,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120643960,
+      "category": "蔬菜",
+      "name": "木瓜",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 2,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120667217,
+      "category": "自制预制菜",
+      "name": "面筋包",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 2,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120690834,
+      "category": "奶蛋粮",
+      "name": "馄炖皮",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120713260,
+      "category": "奶蛋粮",
+      "name": "炒饭",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120791997,
+      "category": "海鲜",
+      "name": "虾滑",
+      "quantity": 3,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120801987,
+      "category": "肉类",
+      "name": "牛排",
+      "quantity": 1,
+      "unit": "只",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120836290,
+      "category": "水果",
+      "name": "百香果",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771120899909,
+      "category": "肉类",
+      "name": "腌肉",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121044576,
+      "category": "肉类",
+      "name": "腌肉",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121049978,
+      "category": "肉类",
+      "name": "香肠",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121069206,
+      "category": "奶蛋粮",
+      "name": "火锅豆皮",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121098226,
+      "category": "蔬菜",
+      "name": "冷冻笋",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121104505,
+      "category": "海鲜",
+      "name": "鱼丸",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121170174,
+      "category": "蔬菜",
+      "name": "毛豆仁",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121181797,
+      "category": "奶蛋粮",
+      "name": "栗子",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121196185,
+      "category": "奶蛋粮",
+      "name": "粉包圆",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121331740,
+      "category": "肉类",
+      "name": "香肠",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121359665,
+      "category": "肉类",
+      "name": "牛排",
+      "quantity": 1,
+      "unit": "只",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121371332,
+      "category": "海鲜",
+      "name": "花枝虾排",
+      "quantity": 1,
+      "unit": "只",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121407608,
+      "category": "海鲜",
+      "name": "鱼片",
+      "quantity": 2,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121414431,
+      "category": "海鲜",
+      "name": "墨鱼肠",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121431712,
+      "category": "早餐",
+      "name": "烧卖",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121465432,
+      "category": "肉类",
+      "name": "鸡翅",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121538084,
+      "category": "肉类",
+      "name": "羊肉片",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121545719,
+      "category": "蔬菜",
+      "name": "冷冻笋",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121560391,
+      "category": "奶蛋粮",
+      "name": "干贝",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121573577,
+      "category": "奶蛋粮",
+      "name": "鲜菇面筋",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121683641,
+      "category": "奶蛋粮",
+      "name": "冷冻面",
+      "quantity": 4,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121747303,
+      "category": "肉类",
+      "name": "炒牛肉",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 3,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121814708,
+      "category": "水果",
+      "name": "冷冻草莓",
+      "quantity": 2,
+      "unit": "盒/袋",
+      "state": "冷冻",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 1,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771121987909,
+      "category": "水果",
+      "name": "蓝莓",
+      "quantity": 2,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 7,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122012180,
+      "category": "水果",
+      "name": "葡萄",
+      "quantity": 2,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 7,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122038226,
+      "category": "饮料",
+      "name": "乳酸菌",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 7,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122067363,
+      "category": "奶蛋粮",
+      "name": "酒酿",
+      "quantity": 2,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 7,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122160889,
+      "category": "奶蛋粮",
+      "name": "酸奶",
+      "quantity": 4,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 2,
+      "shelfLifeUnit": "months",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122211707,
+      "category": "蔬菜",
+      "name": "青菜",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 7,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122224586,
+      "category": "蔬菜",
+      "name": "黄瓜",
+      "quantity": 5,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 5,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122242841,
+      "category": "奶蛋粮",
+      "name": "米线",
+      "quantity": 2,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 5,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122272488,
+      "category": "蔬菜",
+      "name": "糯米笋",
+      "quantity": 2,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 15,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122284650,
+      "category": "蔬菜",
+      "name": "儿菜",
+      "quantity": 1,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 15,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122294347,
+      "category": "蔬菜",
+      "name": "龙须菜",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 2,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122316463,
+      "category": "蔬菜",
+      "name": "红菜苔",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 7,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122339197,
+      "category": "蔬菜",
+      "name": "山药",
+      "quantity": 2,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 15,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122347747,
+      "category": "蔬菜",
+      "name": "南瓜",
+      "quantity": 1,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 2,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122364983,
+      "category": "蔬菜",
+      "name": "牛油果",
+      "quantity": 8,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 20,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122387831,
+      "category": "蔬菜",
+      "name": "胡萝卜",
+      "quantity": 1,
+      "unit": "磅",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 20,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122397305,
+      "category": "蔬菜",
+      "name": "花菜",
+      "quantity": 1,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 15,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122411556,
+      "category": "蔬菜",
+      "name": "花椰菜",
+      "quantity": 1,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 10,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122420170,
+      "category": "蔬菜",
+      "name": "儿菜",
+      "quantity": 2,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 10,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122430112,
+      "category": "蔬菜",
+      "name": "萝卜",
+      "quantity": 1,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 10,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122471545,
+      "category": "蔬菜",
+      "name": "茭瓜",
+      "quantity": 1,
+      "unit": "盒/袋",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 5,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122483840,
+      "category": "蔬菜",
+      "name": "洋葱",
+      "quantity": 2,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 20,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122496020,
+      "category": "蔬菜",
+      "name": "西红柿",
+      "quantity": 3,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 15,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122505390,
+      "category": "蔬菜",
+      "name": "牛油果",
+      "quantity": 2,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 15,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122549541,
+      "category": "蔬菜",
+      "name": "葱",
+      "quantity": 2,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 10,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    },
+    {
+      "id": 1771122560454,
+      "category": "蔬菜",
+      "name": "姜",
+      "quantity": 1,
+      "unit": "只",
+      "state": "新鲜",
+      "purchaseDate": "2026-02-14",
+      "shelfLifeValue": 10,
+      "shelfLifeUnit": "days",
+      "consumeQty": 1
+    }
+  ],
+  "dishes": [
+    {
+      "id": null,
+      "name": "羊肉饭",
+      "category": "肉类",
+      "targets": [
+        "Grace",
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "羊肉块",
+      "ingredients": "胡萝卜，葡萄干"
+    },
+    {
+      "id": null,
+      "name": "番茄炒蛋",
+      "category": "蔬菜/小炒",
+      "targets": [
+        "Daddy"
+      ],
+      "mainIngredient": "蛋",
+      "ingredients": "番茄"
+    },
+    {
+      "id": null,
+      "name": "烤小羊排",
+      "category": "肉类",
+      "targets": [
+        "Grace"
+      ],
+      "mainIngredient": "小羊排",
+      "ingredients": ""
+    },
+    {
+      "id": null,
+      "name": "北京烤鸭",
+      "category": "肉类",
+      "targets": [
+        "Grace",
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "鸭",
+      "ingredients": "黄瓜，烤鸭饼，甜面酱"
+    },
+    {
+      "id": null,
+      "name": "牛肉果汤",
+      "category": "汤",
+      "targets": [
+        "Grace",
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "牛肉泥",
+      "ingredients": "青菜"
+    },
+    {
+      "id": null,
+      "name": "红烧鸭",
+      "category": "肉类",
+      "targets": [
+        "Grace",
+        "Mommy",
+        "Daddy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "鸭",
+      "ingredients": "海带"
+    },
+    {
+      "id": null,
+      "name": "土豆丝",
+      "category": "蔬菜/小炒",
+      "targets": [
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "土豆",
+      "ingredients": "牛肉丝"
+    },
+    {
+      "id": null,
+      "name": "鸡汤",
+      "category": "汤",
+      "targets": [
+        "Mommy"
+      ],
+      "mainIngredient": "鸡",
+      "ingredients": "羊肚菌"
+    },
+    {
+      "id": null,
+      "name": "紫菜蛋汤",
+      "category": "肉类",
+      "targets": [
+        "Mommy",
+        "Daddy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "紫菜，蛋",
+      "ingredients": ""
+    },
+    {
+      "id": null,
+      "name": "龙虾炒面",
+      "category": "海鲜",
+      "targets": [
+        "Grace",
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "龙虾",
+      "ingredients": "面"
+    },
+    {
+      "id": null,
+      "name": "香辣蟹炒年糕",
+      "category": "肉类",
+      "targets": [
+        "Grace",
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "螃蟹",
+      "ingredients": "年糕"
+    },
+    {
+      "id": null,
+      "name": "香辣蟹炒年糕",
+      "category": "海鲜",
+      "targets": [
+        "Grace",
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "螃蟹",
+      "ingredients": "年糕"
+    },
+    {
+      "id": null,
+      "name": "红烧鸡翅",
+      "category": "肉类",
+      "targets": [
+        "Grace"
+      ],
+      "mainIngredient": "鸡翅",
+      "ingredients": ""
+    },
+    {
+      "id": null,
+      "name": "烤鸡翅",
+      "category": "肉类",
+      "targets": [
+        "Grace"
+      ],
+      "mainIngredient": "鸡翅",
+      "ingredients": ""
+    },
+    {
+      "id": null,
+      "name": "盐酥鸡",
+      "category": "Grace 午餐/点心",
+      "targets": [
+        "Grace"
+      ],
+      "mainIngredient": "鸡腿",
+      "ingredients": ""
+    },
+    {
+      "id": null,
+      "name": "肉夹馍",
+      "category": "肉类",
+      "targets": [
+        "Grace"
+      ],
+      "mainIngredient": "红烧牛肉，馍",
+      "ingredients": ""
+    },
+    {
+      "id": null,
+      "name": "羊肚菌酿虾滑",
+      "category": "肉类",
+      "targets": [
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "虾滑，羊肚菌",
+      "ingredients": ""
+    },
+    {
+      "id": null,
+      "name": "煎牛排",
+      "category": "肉类",
+      "targets": [
+        "Grace",
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "牛排",
+      "ingredients": ""
+    },
+    {
+      "id": null,
+      "name": "盐水鸭",
+      "category": "肉类",
+      "targets": [
+        "Grace",
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "鸭",
+      "ingredients": ""
+    },
+    {
+      "id": null,
+      "name": "酱鸡腿",
+      "category": "肉类",
+      "targets": [
+        "Grace",
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "鸡腿",
+      "ingredients": ""
+    },
+    {
+      "id": null,
+      "name": "烤虾排",
+      "category": "肉类",
+      "targets": [
+        "Daddy",
+        "Mommy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "花枝虾排",
+      "ingredients": ""
+    },
+    {
+      "id": null,
+      "name": "虫草花蒸鸡",
+      "category": "肉类",
+      "targets": [
+        "Mommy",
+        "Daddy",
+        "Gong Gong"
+      ],
+      "mainIngredient": "鸡腿",
+      "ingredients": ""
+    }
+  ],
+  "shoppingList": [
+    {
+      "id": 1771119453612,
+      "name": "蛋",
+      "checked": false
+    },
+    {
+      "id": 1771119453613,
+      "name": "番茄",
+      "checked": false
+    }
+  ],
+  "history": [
+    {
+      "id": null,
+      "date": "2026-02-15T01:37:33.613Z"
+    }
+  ],
+  "weeklyPlan": {
+    "thisWeek": [
+      {
+        "id": null,
+        "name": "番茄炒蛋",
+        "category": "蔬菜/小炒",
+        "targets": [
+          "Daddy"
+        ],
+        "mainIngredient": "蛋",
+        "ingredients": "番茄"
+      }
+    ],
+    "nextWeek": []
+  },
+  "exportDate": "2026-02-15T02:35:12.201Z",
+  "version": "1.0"
+}
