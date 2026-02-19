@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家庭食物库存管理 Pro</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        [v-cloak] { display: none; }
+        body { font-family: 'Inter', sans-serif; background-color: #f4f4f5; }
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease; }
+        .fade-enter-from, .fade-leave-to { opacity: 0; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+    </style>
+</head>
+<body class="bg-zinc-100 text-zinc-800">
+<div id="app" v-cloak class="max-w-2xl mx-auto bg-white/80 backdrop-blur-lg min-h-screen shadow-xl relative pb-20">
+    
+    <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-zinc-200 px-2 py-2">
+        <div class="flex justify-around rounded-full bg-zinc-100 p-1">
+            <button @click="activeTab = 'inventory'" :class="activeTab === 'inventory' ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500 hover:text-zinc-700'" class="flex-1 py-2 text-center text-xs sm:text-sm font-medium rounded-full transition-all duration-200">库存管理</button>
+            <button @click="activeTab = 'menu'" :class="activeTab === 'menu' ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500 hover:text-zinc-700'" class="flex-1 py-2 text-center text-xs sm:text-sm font-medium rounded-full transition-all duration-200">菜单管理</button>
+            <button @click="activeTab = 'plan'" :class="activeTab === 'plan' ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500 hover:text-zinc-700'" class="flex-1 py-2 text-center text-xs sm:text-sm font-medium rounded-full transition-all duration-200">菜单规划</button>
+            <button @click="activeTab = 'shopping'" :class="activeTab === 'shopping' ? 'bg-white shadow-sm text-zinc-900' : 'text-zinc-500 hover:text-zinc-700'" class="flex-1 py-2 text-center text-xs sm:text-sm font-medium rounded-full transition-all duration-200">买菜清单</button>
+        </div>
+    </nav>
+
+    <div class="p-4 sm:p-6">
+        
+        <!-- TAB 1: INVENTORY -->
+        <div v-if="activeTab === 'inventory'">
+            <h2 class="text-2xl font-bold mb-6 text-zinc-900 tracking-tight">录入与库存</h2>
+            
+            <div class="bg-zinc-50 p-5 rounded-2xl mb-8 border border-zinc-200/80">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">分类</label>
+                        <select v-model="newItem.category" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 transition">
+                            <option v-for="cat in inventoryCats" :key="cat" :value="cat">{{ cat }}</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2 sm:col-span-1">
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">名称</label>
+                        <input v-model="newItem.name" list="itemList" placeholder="输入或选择" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 transition">
+                        <datalist id="itemList">
+                            <option v-for="item in commonItems[newItem.category]" :key="item" :value="item"></option>
+                        </datalist>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">数量与单位</label>
+                        <div class="flex space-x-2">
+                            <input type="number" v-model.number="newItem.quantity" class="flex-1 p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                            <select v-model="newItem.unit" class="w-24 p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                                <option value="只">只</option>
+                                <option value="盒/袋">盒/袋</option>
+                                <option value="磅">磅</option>
+                                <option value="加仑">加仑</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">状态</label>
+                        <select v-model="newItem.state" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                            <option value="新鲜">新鲜</option>
+                            <option value="冷冻">冷冻</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">购买日期</label>
+                        <input type="date" v-model="newItem.purchaseDate" class="w-full p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">保鲜期</label>
+                        <div class="flex space-x-2 items-center">
+                            <input type="number" v-model.number="newItem.shelfLifeValue" class="flex-1 p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                            <select v-model="newItem.shelfLifeUnit" class="w-24 p-2.5 bg-white border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                                <option value="days">天</option>
+                                <option value="months">月</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button @click="addItem" class="mt-6 w-full bg-zinc-900 text-white py-3 rounded-xl text-sm font-semibold hover:bg-zinc-800 transition-colors shadow-sm">添加到库存</button>
+            </div>
+
+            <!-- 临期食品提醒 -->
+            <div v-if="expiringSoonItems.length > 0" class="bg-amber-50 p-4 rounded-2xl mb-6 border border-amber-200">
+                <div class="flex items-center mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-amber-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    <h3 class="font-bold text-amber-900">临期食品提醒</h3>
+                    <span class="ml-2 text-xs text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">{{ expiringSoonItems.length }} 项</span>
+                </div>
+                <div class="space-y-2">
+                    <div v-for="item in expiringSoonItems" :key="item.id" class="bg-white p-3 rounded-xl border border-amber-200 text-sm">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="font-semibold text-zinc-800">{{ item.name }}</span>
+                                <span class="text-xs text-zinc-500 ml-2">({{ item.category }})</span>
+                            </div>
+                            <span class="text-xs font-medium text-amber-700">{{ calculateExpiryDate(item) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div v-for="cat in inventoryCats" :key="cat" class="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+                    <div @click="toggleInventoryCat(cat)" class="flex justify-between items-center p-4 cursor-pointer hover:bg-zinc-50 transition-colors">
+                        <div class="flex items-center">
+                            <span class="w-2 h-2 rounded-full mr-3" :class="getCategoryColor(cat)"></span>
+                            <h3 class="font-bold text-zinc-800">{{ cat }}</h3>
+                            <span class="ml-2 text-xs text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded-full">
+                                {{ inventory.filter(i => i.category === cat).length }}
+                            </span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-zinc-400 transition-transform duration-300" :class="{'rotate-180': expandedInventoryCats.includes(cat)}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    </div>
+                    <transition name="fade">
+                        <div v-if="expandedInventoryCats.includes(cat)" class="border-t border-zinc-100 p-3 space-y-2 bg-zinc-50/50">
+                            <div v-for="item in sortedInventory.filter(i => i.category === cat)" :key="item.id" 
+                                 class="bg-white p-3 rounded-xl border border-zinc-100 shadow-sm relative group"
+                                 :class="{'border-l-4 border-l-red-400': getExpiryStatus(item) === 'expired', 'border-l-4 border-l-amber-400': getExpiryStatus(item) === 'warning'}">
+                                
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h4 class="font-bold text-base text-zinc-900">{{ item.name }} <span class="text-xs text-zinc-400 font-normal">({{ item.state }})</span></h4>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-xl font-bold text-zinc-900">{{ item.quantity }}</div>
+                                        <div class="text-xs text-zinc-400 -mt-1">{{ item.unit }}</div>
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center text-xs text-zinc-500 mb-2 border-t border-dashed border-zinc-100 pt-2">
+                                    <span>购买: {{ item.purchaseDate }}</span>
+                                    <span class="font-medium" :class="{'text-red-600': getExpiryStatus(item) === 'expired', 'text-amber-600': getExpiryStatus(item) === 'warning'}">
+                                        到期: {{ calculateExpiryDate(item) }}
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between bg-zinc-50 p-2 rounded-lg">
+                                    <button @click="openInventoryModal(item)" class="text-zinc-400 hover:text-blue-600 p-1 text-xs flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                        编辑
+                                    </button>
+                                    <div class="flex items-center space-x-2">
+                                        <div class="flex items-center border border-zinc-200 rounded-md overflow-hidden bg-white">
+                                            <button @click="item.consumeQty = Math.max(1, (item.consumeQty || 1) - 1)" class="px-2 py-1 text-zinc-600 hover:bg-zinc-100 active:scale-95">−</button>
+                                            <input type="number" v-model.number="item.consumeQty" class="w-8 text-center text-xs border-x border-zinc-200 focus:outline-none" min="1">
+                                            <button @click="item.consumeQty = (item.consumeQty || 0) + 1" class="px-2 py-1 text-zinc-600 hover:bg-zinc-100 active:scale-95">+</button>
+                                        </div>
+                                        <button @click="consumeItem(item)" class="bg-zinc-800 text-white px-2 py-1 rounded-md text-xs hover:bg-zinc-700 active:scale-95">消耗</button>
+                                        <button @click="deleteItem(item.id)" class="text-zinc-300 hover:text-red-500 p-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <p v-if="inventory.filter(i => i.category === cat).length === 0" class="text-center text-zinc-400 py-4 text-xs">该分类下暂无库存</p>
+                        </div>
+                    </transition>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: MENU MANAGEMENT -->
+        <div v-if="activeTab === 'menu'">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-zinc-900 tracking-tight">菜品菜单</h2>
+                <button @click="openDishModal()" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-emerald-700 transition shadow-sm">+ 新增菜品</button>
+            </div>
+            
+            <div class="space-y-4">
+                <div v-for="cat in dishCats" :key="cat" class="bg-white rounded-2xl border border-zinc-100 shadow-sm overflow-hidden">
+                    <div @click="toggleCategory(cat)" class="flex justify-between items-center p-4 cursor-pointer hover:bg-zinc-50 transition-colors">
+                        <div class="flex items-center">
+                            <span class="w-2 h-2 rounded-full mr-3" :class="getCategoryColor(cat)"></span>
+                            <h3 class="font-bold text-zinc-800">{{ cat }}</h3>
+                            <span class="ml-2 text-xs text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded-full">{{ dishes.filter(d => d.category === cat).length }}</span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-zinc-400 transition-transform duration-300" :class="{'rotate-180': expandedCategories.includes(cat)}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    </div>
+                    <transition name="fade">
+                        <div v-if="expandedCategories.includes(cat)" class="border-t border-zinc-100 p-4 space-y-3 bg-zinc-50/50">
+                            <div v-for="dish in dishes.filter(d => d.category === cat)" :key="dish.id" class="bg-white p-4 rounded-xl border border-zinc-100 shadow-sm relative group">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-lg text-zinc-900 pr-12">{{ dish.name }}</h4>
+                                    <div class="absolute top-3 right-3 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button @click="openDishModal(dish)" class="text-zinc-400 hover:text-blue-600 p-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg></button>
+                                        <button @click="deleteDish(dish.id)" class="text-zinc-400 hover:text-red-600 p-1"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg></button>
+                                    </div>
+                                </div>
+                                <div class="text-sm text-zinc-600 space-y-1">
+                                    <p>主料: <span class="font-semibold text-zinc-800">{{ dish.mainIngredient }}</span></p>
+                                    <p v-if="dish.ingredients">辅料: <span class="text-zinc-500">{{ dish.ingredients }}</span></p>
+                                </div>
+                                <div class="mt-3 flex flex-wrap gap-1.5">
+                                    <span v-for="person in dish.targets" :key="person" class="px-2 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-600">{{ person }}</span>
+                                    <span v-if="!dish.targets.length" class="text-xs text-zinc-300">未指定人员</span>
+                                </div>
+                            </div>
+                            <p v-if="dishes.filter(d => d.category === cat).length === 0" class="text-center text-zinc-400 py-4 text-xs">该分类下暂无菜品</p>
+                        </div>
+                    </transition>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: PLANNING -->
+        <div v-if="activeTab === 'plan'">
+            <h2 class="text-2xl font-bold mb-6 text-zinc-900 tracking-tight">菜单规划</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div class="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm">
+                    <h4 class="font-bold text-red-500 text-sm mb-3 flex items-center"><span class="w-2 h-2 bg-red-400 rounded-full mr-2"></span>肉类推荐</h4>
+                    <ul class="space-y-2">
+                        <li v-for="rec in meatRecommendations" :key="rec.id" class="flex justify-between items-center text-sm group">
+                            <div><div class="font-medium text-zinc-800">{{ rec.name }}</div><div class="text-xs text-zinc-400">{{ rec.reason }}</div></div>
+                            <button @click="addToPlan(rec, 'thisWeek')" class="text-xs bg-zinc-100 text-zinc-600 px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 hover:bg-zinc-900 hover:text-white transition-all">本周</button>
+                        </li>
+                        <li v-if="meatRecommendations.length === 0" class="text-sm text-zinc-400 py-2">暂无推荐</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm">
+                    <h4 class="font-bold text-green-500 text-sm mb-3 flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>蔬菜推荐</h4>
+                    <ul class="space-y-2">
+                        <li v-for="rec in vegRecommendations" :key="rec.id" class="flex justify-between items-center text-sm group">
+                            <div><div class="font-medium text-zinc-800">{{ rec.name }}</div><div class="text-xs text-zinc-400">{{ rec.reason }}</div></div>
+                            <button @click="addToPlan(rec, 'thisWeek')" class="text-xs bg-zinc-100 text-zinc-600 px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 hover:bg-zinc-900 hover:text-white transition-all">本周</button>
+                        </li>
+                        <li v-if="vegRecommendations.length === 0" class="text-sm text-zinc-400 py-2">暂无推荐</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-3">手动选择</h3>
+                <div class="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                    <div v-for="dish in dishes" :key="dish.id" class="p-2 rounded-xl text-center cursor-pointer transition-all border text-xs"
+                         :class="hasIngredient(dish.mainIngredient) ? 'bg-white border-zinc-100 hover:border-zinc-300' : 'bg-zinc-100 border-zinc-100 text-zinc-300'"
+                         @click="showPlanModal(dish)">
+                        <div class="font-medium truncate">{{ dish.name }}</div>
+                        <div v-if="!hasIngredient(dish.mainIngredient)" class="text-red-300 mt-0.5">(缺料)</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-blue-900">本周菜单</h3>
+                        <button @click="weeklyPlan.thisWeek = []" class="text-xs text-blue-600 hover:underline">清空</button>
+                    </div>
+                    <div class="space-y-2">
+                        <div v-for="(dish, index) in weeklyPlan.thisWeek" :key="index" class="flex justify-between items-center bg-white p-3 rounded-xl text-sm shadow-sm border border-blue-50">
+                            <div><span class="font-medium text-zinc-800">{{ dish.name }}</span><span class="text-xs text-zinc-400 ml-2">({{ dish.targets && dish.targets.length ? dish.targets.join(', ') : '全员' }})</span></div>
+                            <button @click="weeklyPlan.thisWeek.splice(index, 1)" class="text-zinc-300 hover:text-zinc-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                        </div>
+                        <p v-if="weeklyPlan.thisWeek.length === 0" class="text-zinc-400 text-sm text-center py-4">点击上方菜品添加</p>
+                    </div>
+                </div>
+                <div class="bg-purple-50 p-5 rounded-2xl border border-purple-100">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-purple-900">下周菜单</h3>
+                        <button @click="weeklyPlan.nextWeek = []" class="text-xs text-purple-600 hover:underline">清空</button>
+                    </div>
+                    <div class="space-y-2">
+                        <div v-for="(dish, index) in weeklyPlan.nextWeek" :key="index" class="flex justify-between items-center bg-white p-3 rounded-xl text-sm shadow-sm border border-purple-50">
+                            <div><span class="font-medium text-zinc-800">{{ dish.name }}</span><span class="text-xs text-zinc-400 ml-2">({{ dish.targets && dish.targets.length ? dish.targets.join(', ') : '全员' }})</span></div>
+                            <button @click="weeklyPlan.nextWeek.splice(index, 1)" class="text-zinc-300 hover:text-zinc-600"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+                        </div>
+                        <p v-if="weeklyPlan.nextWeek.length === 0" class="text-zinc-400 text-sm text-center py-4">点击上方菜品添加</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: SHOPPING LIST -->
+        <div v-if="activeTab === 'shopping'">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-zinc-900 tracking-tight">买菜清单</h2>
+                <button @click="copyShoppingList" class="bg-zinc-900 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-zinc-700 transition shadow-sm flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                    复制清单
+                </button>
+            </div>
+
+            <!-- 今日买菜 -->
+            <div class="bg-green-50 p-4 rounded-2xl border border-green-100 shadow-sm mb-6">
+                <div class="flex justify-between items-center mb-3 border-b border-green-100 pb-2">
+                    <h3 class="font-bold text-green-900 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                        今日买菜
+                    </h3>
+                    <span class="text-xs text-green-600">{{ todayBuyList.length }} 项</span>
+                </div>
+                <div class="space-y-2 mb-3">
+                    <div v-for="(item, index) in todayBuyList" :key="item.id" 
+                         class="flex items-center justify-between p-2 rounded-lg hover:bg-green-100 group bg-white border border-green-200">
+                        <div class="flex items-center">
+                            <input type="checkbox" v-model="item.checked" class="w-4 h-4 rounded border-green-300 text-green-600 focus:ring-green-500 mr-3">
+                            <span :class="{'line-through text-zinc-300': item.checked, 'text-zinc-700': !item.checked}">{{ item.name }}</span>
+                        </div>
+                        <button @click="todayBuyList.splice(index, 1); saveData()" class="text-zinc-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                    <p v-if="todayBuyList.length === 0" class="text-center text-green-400 py-4 text-sm">从下方待购清单中选择今日要买的食材</p>
+                </div>
+            </div>
+
+            <!-- 待购清单 -->
+            <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100 shadow-sm mb-6">
+                <div class="flex justify-between items-center mb-3 border-b border-amber-100 pb-2">
+                    <h3 class="font-bold text-amber-900">待购清单</h3>
+                    <span class="text-xs text-amber-600">{{ toBuyList.length }} 项</span>
+                </div>
+                <div class="space-y-2">
+                    <div v-for="(item, index) in toBuyList" :key="item.id" 
+                         class="flex items-center justify-between p-2 rounded-lg hover:bg-amber-100 group bg-white border border-amber-200">
+                        <span class="text-zinc-700">{{ item.name }}</span>
+                        <div class="flex items-center space-x-2">
+                            <button @click="moveToToday(item)" class="text-xs bg-green-500 text-white px-2 py-1 rounded-md hover:bg-green-600 opacity-0 group-hover:opacity-100 transition-all">今日购买</button>
+                            <button @click="toBuyList.splice(index, 1); saveData()" class="text-zinc-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <p v-if="toBuyList.length === 0" class="text-center text-amber-400 py-4 text-sm">待购清单为空</p>
+                </div>
+            </div>
+
+            <!-- 手动添加 -->
+            <div class="flex space-x-2 mb-6">
+                <input v-model="newShoppingItem" @keyup.enter="addShoppingItem" placeholder="输入需要购买的物品" class="flex-1 p-3 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                <button @click="addShoppingItem" class="bg-zinc-900 text-white px-4 rounded-xl hover:bg-zinc-700 transition-colors">添加</button>
+            </div>
+
+            <!-- 普通购物清单 -->
+            <div class="bg-white p-4 rounded-2xl border border-zinc-100 shadow-sm mb-8">
+                <div class="flex justify-between items-center mb-3 border-b border-zinc-100 pb-2">
+                    <h3 class="font-bold text-zinc-800">其他购物清单</h3>
+                    <span class="text-xs text-zinc-400">{{ shoppingList.length }} 项</span>
+                </div>
+                <div class="space-y-2">
+                    <div v-for="(item, index) in shoppingList" :key="item.id" 
+                         class="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-50 group">
+                        <div class="flex items-center">
+                            <input type="checkbox" v-model="item.checked" class="w-4 h-4 rounded border-zinc-300 text-emerald-600 focus:ring-emerald-500 mr-3">
+                            <span :class="{'line-through text-zinc-300': item.checked, 'text-zinc-700': !item.checked}">{{ item.name }}</span>
+                        </div>
+                        <button @click="shoppingList.splice(index, 1)" class="text-zinc-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                    <p v-if="shoppingList.length === 0" class="text-center text-zinc-400 py-4 text-sm">清单为空</p>
+                </div>
+            </div>
+
+            <!-- Suggestions from Menu -->
+            <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100">
+                <h3 class="font-bold text-amber-900 mb-3 text-sm">智能建议 (基于菜单缺失食材)</h3>
+                <p class="text-xs text-amber-700 mb-3" v-if="missingIngredientsFromPlan.length > 0">检测到您计划的菜单中缺少以下食材,点击添加到清单。</p>
+                <div class="flex flex-wrap gap-2">
+                    <button v-for="ing in missingIngredientsFromPlan" :key="ing" 
+                            @click="addShoppingItemDirect(ing)"
+                            class="bg-white border border-amber-200 text-amber-800 px-3 py-1.5 rounded-lg text-sm hover:bg-amber-100 transition-colors flex items-center">
+                        + {{ ing }}
+                    </button>
+                    <p v-if="missingIngredientsFromPlan.length === 0" class="text-xs text-amber-600">太棒了！您的库存已满足所有计划菜单的需求。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Data Management Button -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button @click="showDataMenu = !showDataMenu" class="bg-zinc-800 text-white p-4 rounded-full shadow-lg hover:bg-zinc-700 transition-transform active:scale-95">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
+            </svg>
+        </button>
+        
+        <!-- Popover Menu -->
+        <div v-if="showDataMenu" class="absolute bottom-16 right-0 w-48 bg-white rounded-xl shadow-2xl border border-zinc-200 overflow-hidden text-sm">
+            <div class="p-2 border-b border-zinc-100 bg-zinc-50 text-zinc-500 font-bold text-xs">数据管理</div>
+            <button @click="exportData" class="w-full text-left px-4 py-3 hover:bg-zinc-50 flex items-center text-zinc-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                导出备份文件
+            </button>
+            <label class="w-full text-left px-4 py-3 hover:bg-zinc-50 flex items-center text-zinc-700 cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                导入数据
+                <input type="file" @change="importData" accept=".json" class="hidden">
+            </label>
+            <button @click="importFromClipboard" class="w-full text-left px-4 py-3 hover:bg-zinc-50 flex items-center text-zinc-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                从剪贴板导入
+            </button>
+            <button @click="shareData" class="w-full text-left px-4 py-3 hover:bg-zinc-50 flex items-center text-zinc-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                分享数据
+            </button>
+            <button @click="copyDataToClipboard" class="w-full text-left px-4 py-3 hover:bg-zinc-50 flex items-center text-zinc-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+                复制数据(推荐iOS)
+            </button>
+            <button @click="clearAllData" class="w-full text-left px-4 py-3 hover:bg-red-50 flex items-center text-red-600 border-t border-zinc-100">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                清空所有数据
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal: Dish Editor -->
+    <div v-if="showDishModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-center items-center p-4" @click.self="showDishModal = false">
+        <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden" @click.stop>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-zinc-900 mb-6">{{ editingDish.id ? '编辑菜品' : '新增菜品' }}</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">菜名</label>
+                        <input v-model="editingDish.name" placeholder="例如：番茄炒蛋" class="w-full p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-500 mb-1">分类</label>
+                            <select v-model="editingDish.category" class="w-full p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <option v-for="cat in dishCats" :key="cat" :value="cat">{{ cat }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-500 mb-1">主料</label>
+                            <input v-model="editingDish.mainIngredient" placeholder="如：猪肉,牛肉" class="w-full p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">适合谁吃 (多选)</label>
+                        <div class="flex flex-wrap gap-2 bg-zinc-50 p-2 rounded-xl border border-zinc-200">
+                            <label v-for="person in peopleList" :key="person" class="inline-flex items-center space-x-1.5 cursor-pointer">
+                                <input type="checkbox" :value="person" v-model="editingDish.targets" class="rounded text-emerald-500 focus:ring-emerald-500">
+                                <span class="text-sm text-zinc-700">{{ person }}</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">辅料</label>
+                        <input v-model="editingDish.ingredients" placeholder="逗号分隔" class="w-full p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                </div>
+                <div class="flex space-x-3 mt-8">
+                    <button @click="showDishModal = false" class="flex-1 py-3 rounded-xl border border-zinc-200 text-zinc-600 font-medium hover:bg-zinc-50 transition-colors">取消</button>
+                    <button @click="saveDish" class="flex-1 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-sm">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Inventory Editor -->
+    <div v-if="showInventoryModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-center items-center p-4" @click.self="showInventoryModal = false">
+        <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden" @click.stop>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-zinc-900 mb-6">编辑库存: {{ editingItem.name }}</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-zinc-500 mb-1">分类</label>
+                        <select v-model="editingItem.category" class="w-full p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                            <option v-for="cat in inventoryCats" :key="cat" :value="cat">{{ cat }}</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-500 mb-1">购买日期</label>
+                            <input type="date" v-model="editingItem.purchaseDate" class="w-full p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-zinc-500 mb-1">状态</label>
+                            <select v-model="editingItem.state" class="w-full p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                                <option value="新鲜">新鲜</option>
+                                <option value="冷冻">冷冻</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2 items-center">
+                        <div class="flex-1">
+                            <label class="block text-xs font-medium text-zinc-500 mb-1">保鲜期</label>
+                            <input type="number" v-model.number="editingItem.shelfLifeValue" class="w-full p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                        </div>
+                        <div class="w-24 pt-5">
+                            <select v-model="editingItem.shelfLifeUnit" class="w-full p-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900">
+                                <option value="days">天</option>
+                                <option value="months">月</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex space-x-3 mt-8">
+                    <button @click="showInventoryModal = false" class="flex-1 py-3 rounded-xl border border-zinc-200 text-zinc-600 font-medium hover:bg-zinc-50 transition-colors">取消</button>
+                    <button @click="saveInventoryItem" class="flex-1 py-3 rounded-xl bg-zinc-900 text-white font-medium hover:bg-zinc-800 transition-colors shadow-sm">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Plan Selection -->
+    <div v-if="showPlanTargetModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-center items-center p-4" @click.self="showPlanTargetModal = false">
+        <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden" @click.stop>
+            <div class="p-6 text-center">
+                <h3 class="text-xl font-bold text-zinc-900 mb-2">添加到菜单</h3>
+                <p class="text-sm text-zinc-500 mb-6">选择将 "{{ selectedDishForPlan ? selectedDishForPlan.name : '' }}" 添加到哪个计划？</p>
+                <div class="space-y-3">
+                    <button @click="confirmAddToPlan('thisWeek')" class="w-full py-3 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition shadow-sm">本周菜单</button>
+                    <button @click="confirmAddToPlan('nextWeek')" class="w-full py-3 rounded-xl bg-purple-600 text-white font-medium hover:bg-purple-700 transition shadow-sm">下周菜单</button>
+                </div>
+                <button @click="showPlanTargetModal = false" class="mt-4 text-sm text-zinc-400 hover:text-zinc-600">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Missing Ingredients -->
+    <div v-if="showMissingAlert" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex justify-center items-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden">
+            <div class="p-6">
+                <div class="text-center mb-4">
+                    <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-amber-100 mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-zinc-900">缺少食材</h3>
+                    <p class="text-sm text-zinc-500 mt-2">该菜品缺少以下食材：</p>
+                </div>
+                <div class="bg-zinc-50 p-3 rounded-xl mb-4 text-sm text-zinc-700 text-left">
+                    <ul class="list-disc list-inside">
+                        <li v-for="ing in missingIngredientsList" :key="ing">{{ ing }}</li>
+                    </ul>
+                </div>
+                <p class="text-xs text-center text-zinc-500 mb-4">是否将它们加入买菜清单？</p>
+                <div class="flex space-x-3">
+                    <button @click="handleMissingIngredients(false)" class="flex-1 py-3 rounded-xl border border-zinc-200 text-zinc-600 font-medium hover:bg-zinc-50 transition-colors text-sm">仍要添加菜单</button>
+                    <button @click="handleMissingIngredients(true)" class="flex-1 py-3 rounded-xl bg-emerald-600 text-white font-medium hover:bg-emerald-700 transition-colors shadow-sm text-sm">添加到清单</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const { createApp } = Vue;
+
+createApp({
+    data() {
+        return {
+            activeTab: 'inventory',
+            showDishModal: false,
+            showInventoryModal: false,
+            showPlanTargetModal: false,
+            showMissingAlert: false,
+            showDataMenu: false,
+            expandedCategories: ['肉类'],
+            expandedInventoryCats: ['肉类', '海鲜', '蔬菜'],
+            inventoryCats: ['肉类', '海鲜', '蔬菜', '奶蛋粮', '水果', '饮料', '早餐', '零食', '调料', '自制预制菜', '干货', '甜食'],
+            dishCats: ['肉类', '海鲜', '蔬菜/小炒', '汤', '早餐', 'Grace 午餐/点心', '甜点'],
+            peopleList: ['Grace', 'Daddy', 'Mommy', 'Gong Gi'],
+            commonItems: {
+                '肉类': ['猪肉', '牛肉', '鸡肉', '排骨'],
+                '海鲜': ['鱼', '虾', '蟹', '蛤蜊', '三文鱼'],
+                '蔬菜': ['土豆', '西红柿', '黄瓜', '青菜', '茄子', '青椒', '洋葱'],
+                '奶蛋粮': ['鸡蛋', '牛奶', '酸奶', '大米', '面条', '面包'],
+                '水果': ['苹果', '香蕉', '橙子', '西瓜', '葡萄'],
+                '饮料': ['矿泉水', '可乐', '果汁', '茶'],
+                '早餐': ['麦片', '包子', '馒头'],
+                '零食': ['饼干', '薯片', '坚果'],
+                '调料': ['酱油', '盐', '糖', '醋', '油', '料酒'],
+                '自制预制菜': ['冷冻水饺', '冷冻包子', '预制肉酱'],
+                '干货': ['木耳', '香菇', '银耳', '粉丝', '腐竹', '海带'],
+                '甜食': ['蛋糕', '饼干', '巧克力', '糖果', '布丁']
+            },
+            inventory: [],
+            dishes: [],
+            shoppingList: [],
+            toBuyList: [],
+            todayBuyList: [],
+            history: [],
+            weeklyPlan: { thisWeek: [], nextWeek: [] },
+            newItem: {
+                category: '肉类',
+                name: '',
+                quantity: 1,
+                unit: '只',
+                state: '新鲜',
+                purchaseDate: new Date().toISOString().slice(0, 10),
+                shelfLifeValue: 7,
+                shelfLifeUnit: 'days'
+            },
+            editingDish: { id: null, name: '', category: '肉类', targets: [], mainIngredient: '', ingredients: '' },
+            editingItem: { id: null, name: '', category: '', purchaseDate: '', state: '', shelfLifeValue: 0, shelfLifeUnit: 'days' },
+            newShoppingItem: '',
+            selectedDishForPlan: null,
+            missingIngredientsList: [],
+            autoSaveInterval: null
+        };
+    },
+    computed: {
+        sortedInventory() {
+            return [...this.inventory].sort((a, b) => {
+                const expA = new Date(a.purchaseDate);
+                let daysA = a.shelfLifeValue;
+                if (a.shelfLifeUnit === 'months') daysA *= 30;
+                expA.setDate(expA.getDate() + daysA);
+                
+                const expB = new Date(b.purchaseDate);
+                let daysB = b.shelfLifeValue;
+                if (b.shelfLifeUnit === 'months') daysB *= 30;
+                expB.setDate(expB.getDate() + daysB);
+                
+                return expA - expB;
+            });
+        },
+        expiringSoonItems() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            return this.inventory.filter(item => {
+                const purchase = new Date(item.purchaseDate);
+                let daysToAdd = item.shelfLifeValue;
+                if (item.shelfLifeUnit === 'months') daysToAdd *= 30;
+                const expiry = new Date(purchase.setDate(purchase.getDate() + daysToAdd));
+                const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+                
+                if (item.state === '冷冻') {
+                    return diffDays >= 0 && diffDays <= 30;
+                } else {
+                    return diffDays >= 0 && diffDays <= 2;
+                }
+            });
+        },
+        meatRecommendations() {
+            const cats = ['肉类', '海鲜', '汤'];
+            return this.dishes
+                .filter(d => cats.includes(d.category))
+                .map(d => ({ ...d, ...this.getScore(d) }))
+                .filter(d => d.score > -50)
+                .sort((a, b) => {
+                    if (Math.abs(a.score - b.score) > 30) {
+                        return b.score - a.score;
+                    }
+                    const aFreq = this.history.filter(h => h.id === a.id).length;
+                    const bFreq = this.history.filter(h => h.id === b.id).length;
+                    return aFreq - bFreq;
+                })
+                .slice(0, 5);
+        },
+        vegRecommendations() {
+            const cats = ['蔬菜/小炒', '汤'];
+            return this.dishes
+                .filter(d => cats.includes(d.category))
+                .map(d => ({ ...d, ...this.getScore(d) }))
+                .filter(d => d.score > -50)
+                .sort((a, b) => {
+                    if (Math.abs(a.score - b.score) > 30) {
+                        return b.score - a.score;
+                    }
+                    const aFreq = this.history.filter(h => h.id === a.id).length;
+                    const bFreq = this.history.filter(h => h.id === b.id).length;
+                    return aFreq - bFreq;
+                })
+                .slice(0, 5);
+        },
+        missingIngredientsFromPlan() {
+            const allDishes = [...this.weeklyPlan.thisWeek, ...this.weeklyPlan.nextWeek];
+            const allIngredients = new Set();
+            
+            allDishes.forEach(d => {
+                const mains = d.mainIngredient ? d.mainIngredient.split(/[,，]/) : [];
+                const subs = d.ingredients ? d.ingredients.split(/[,，]/) : [];
+                [...mains, ...subs].forEach(i => {
+                    const name = i.trim();
+                    if (name && !this.hasIngredient(name)) {
+                        allIngredients.add(name);
+                    }
+                });
+            });
+            return Array.from(allIngredients);
+        }
+    },
+    methods: {
+        addItem() {
+            if (!this.newItem.name || !this.newItem.quantity) return alert("请填写完整信息");
+            
+            const existingItem = this.inventory.find(item => 
+                item.name.toLowerCase() === this.newItem.name.toLowerCase() && 
+                item.category === this.newItem.category &&
+                item.state === this.newItem.state &&
+                item.unit === this.newItem.unit
+            );
+            
+            if (existingItem) {
+                existingItem.quantity += this.newItem.quantity;
+                alert(`已将 ${this.newItem.quantity} ${this.newItem.unit} 添加到现有的 "${this.newItem.name}" 中\n当前总量: ${existingItem.quantity} ${existingItem.unit}`);
+            } else {
+                this.inventory.push({ id: Date.now(), ...this.newItem, consumeQty: 1 });
+            }
+            
+            this.newItem.name = '';
+            this.newItem.quantity = 1;
+            this.saveData();
+        },
+        consumeItem(item) {
+            let amount = parseInt(item.consumeQty);
+            if (isNaN(amount) || amount < 1) {
+                item.consumeQty = 1;
+                return;
+            }
+            const realItem = this.inventory.find(i => i.id === item.id);
+            if (!realItem) return;
+            
+            if (realItem.quantity <= amount) {
+                const itemName = realItem.name;
+                this.inventory = this.inventory.filter(i => i.id !== item.id);
+                
+                if (!this.toBuyList.some(i => i.name.toLowerCase() === itemName.toLowerCase())) {
+                    this.toBuyList.push({ id: Date.now(), name: itemName });
+                }
+                
+                alert(`${itemName} 已消耗完毕并移除。\n已自动添加到待购清单！`);
+            } else {
+                realItem.quantity -= amount;
+            }
+            this.saveData();
+        },
+        deleteItem(id) {
+            if (confirm("确定要删除这个条目吗？")) {
+                this.inventory = this.inventory.filter(i => i.id !== id);
+                this.saveData();
+            }
+        },
+        openInventoryModal(item) {
+            this.editingItem = { ...item };
+            this.showInventoryModal = true;
+        },
+        saveInventoryItem() {
+            const idx = this.inventory.findIndex(i => i.id === this.editingItem.id);
+            if (idx >= 0) {
+                this.inventory[idx] = { ...this.inventory[idx], ...this.editingItem };
+                this.showInventoryModal = false;
+                this.saveData();
+            }
+        },
+        calculateExpiryDate(item) {
+            const purchase = new Date(item.purchaseDate);
+            let daysToAdd = item.shelfLifeValue;
+            if (item.shelfLifeUnit === 'months') daysToAdd *= 30;
+            purchase.setDate(purchase.getDate() + daysToAdd);
+            return purchase.toLocaleDateString();
+        },
+        getExpiryStatus(item) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const purchase = new Date(item.purchaseDate);
+            let daysToAdd = item.shelfLifeValue;
+            if (item.shelfLifeUnit === 'months') daysToAdd *= 30;
+            const expiry = new Date(purchase.setDate(purchase.getDate() + daysToAdd));
+            const diffDays = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+            if (diffDays < 0) return 'expired';
+            if (diffDays <= 2) return 'warning';
+            return 'fresh';
+        },
+        toggleInventoryCat(cat) {
+            const idx = this.expandedInventoryCats.indexOf(cat);
+            if (idx >= 0) this.expandedInventoryCats.splice(idx, 1);
+            else this.expandedInventoryCats.push(cat);
+        },
+        toggleCategory(cat) {
+            const idx = this.expandedCategories.indexOf(cat);
+            if (idx >= 0) this.expandedCategories.splice(idx, 1);
+            else this.expandedCategories.push(cat);
+        },
+        getCategoryColor(cat) {
+            if (cat.includes('肉')) return 'bg-red-400';
+            if (cat.includes('海鲜')) return 'bg-blue-400';
+            if (cat.includes('蔬菜') || cat.includes('素')) return 'bg-green-400';
+            if (cat.includes('Grace')) return 'bg-pink-400';
+            return 'bg-zinc-300';
+        },
+        openDishModal(dish = null) {
+            if (dish) this.editingDish = { ...dish };
+            else this.editingDish = { id: null, name: '', category: '肉类', targets: [], mainIngredient: '', ingredients: '' };
+            this.showDishModal = true;
+        },
+        saveDish() {
+            if (!this.editingDish.name || !this.editingDish.mainIngredient) return alert("请填写菜名和主料");
+            if (this.editingDish.id) {
+                const idx = this.dishes.findIndex(d => d.id === this.editingDish.id);
+                if (idx >= 0) this.dishes[idx] = { ...this.editingDish };
+            } else {
+                this.dishes.push({ id: Date.now(), ...this.editingDish });
+            }
+            this.showDishModal = false;
+            this.saveData();
+        },
+        deleteDish(id) {
+            if (confirm("确定删除该菜品？")) {
+                this.dishes = this.dishes.filter(d => d.id !== id);
+                this.saveData();
+            }
+        },
+        moveToToday(item) {
+            if (!this.todayBuyList.some(i => i.id === item.id)) {
+                this.todayBuyList.push({ ...item, checked: false });
+                this.toBuyList = this.toBuyList.filter(i => i.id !== item.id);
+                this.saveData();
+            }
+        },
+        hasIngredient(ingredientsStr) {
+            if (!ingredientsStr) return true;
+            const items = ingredientsStr.split(/[,，]/).map(s => s.trim()).filter(s => s);
+            if (items.length === 0) return true;
+            return items.some(ing => {
+                return this.inventory.some(item =>
+                    item.name.toLowerCase().includes(ing.toLowerCase()) && item.quantity > 0
+                );
+            });
+        },
+        getScore(dish) {
+            let score = 0;
+            let reason = "";
+            if (!this.hasIngredient(dish.mainIngredient)) return { score: -100, reason: "缺主料" };
+            const mainIngredients = dish.mainIngredient.split(/[,，]/).map(s => s.trim());
+            let minDiffDays = Infinity;
+            
+            mainIngredients.forEach(ing => {
+                const mainInv = this.inventory.find(item =>
+                    item.name.toLowerCase().includes(ing.toLowerCase()) && item.quantity > 0
+                );
+                if (mainInv) {
+                    const today = new Date();
+                    const purchase = new Date(mainInv.purchaseDate);
+                    let days = mainInv.shelfLifeValue;
+                    if (mainInv.shelfLifeUnit === 'months') days *= 30;
+                    const expiry = new Date(purchase.setDate(purchase.getDate() + days));
+                    const diff = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+                    if (diff < minDiffDays) minDiffDays = diff;
+                }
+            });
+            
+            if (minDiffDays < 0) { score += 100; reason = "已过期!"; }
+            else if (minDiffDays <= 2) { score += 50; reason = "即将过期"; }
+            else if (minDiffDays <= 5) { score += 20; reason = "近期食用"; }
+            else { reason = "新鲜"; }
+            
+            const timesEaten = this.history.filter(h => h.id === dish.id).length;
+            score -= (timesEaten * 15);
+            return { score, reason };
+        },
+        showPlanModal(dish) {
+            this.selectedDishForPlan = dish;
+            this.showPlanTargetModal = true;
+        },
+        confirmAddToPlan(target) {
+            if (this.selectedDishForPlan) {
+                this.addToPlan(this.selectedDishForPlan, target);
+                this.showPlanTargetModal = false;
+            }
+        },
+        addToPlan(dish, targetKey) {
+            const mains = dish.mainIngredient ? dish.mainIngredient.split(/[,，]/) : [];
+            const subs = dish.ingredients ? dish.ingredients.split(/[,，]/) : [];
+            const allIngredients = [...mains, ...subs].map(s => s.trim()).filter(s => s);
+            const missing = allIngredients.filter(ing => !this.hasIngredient(ing));
+            
+            if (missing.length > 0) {
+                this.missingIngredientsList = missing;
+                this.showMissingAlert = true;
+                window._pendingPlan = { dish, targetKey, missing };
+            } else {
+                this.weeklyPlan[targetKey].push(dish);
+                this.history.push({ id: dish.id, date: new Date().toISOString() });
+                if (this.history.length > 100) this.history.shift();
+                this.saveData();
+            }
+        },
+        handleMissingIngredients(addToShopping) {
+            if (addToShopping && window._pendingPlan) {
+                window._pendingPlan.missing.forEach(ing => this.addShoppingItemDirect(ing));
+            }
+            if (window._pendingPlan) {
+                const { dish, targetKey } = window._pendingPlan;
+                this.weeklyPlan[targetKey].push(dish);
+                this.history.push({ id: dish.id, date: new Date().toISOString() });
+                if (this.history.length > 100) this.history.shift();
+            }
+            window._pendingPlan = null;
+            this.showMissingAlert = false;
+            this.saveData();
+        },
+        addShoppingItem() {
+            if (!this.newShoppingItem.trim()) return;
+            this.addShoppingItemDirect(this.newShoppingItem.trim());
+            this.newShoppingItem = '';
+        },
+        addShoppingItemDirect(name) {
+            if (!this.toBuyList.some(i => i.name.toLowerCase() === name.toLowerCase())) {
+                this.toBuyList.push({ id: Date.now() + Math.random(), name: name });
+                this.saveData();
+            }
+        },
+        copyShoppingList() {
+            const content = this.shoppingList
+                .filter(i => !i.checked)
+                .map(i => `- [ ] ${i.name}`)
+                .join('\n');
+            if (!content) {
+                alert("清单为空,无内容可复制。");
+                return;
+            }
+            navigator.clipboard.writeText(content).then(() => {
+                alert("已复制到剪贴板！");
+            }, (err) => {
+                alert("复制失败,请手动复制。");
+            });
+        },
+        exportData() {
+            try {
+                const data = {
+                    inventory: this.inventory,
+                    dishes: this.dishes,
+                    shoppingList: this.shoppingList,
+                    toBuyList: this.toBuyList,
+                    todayBuyList: this.todayBuyList,
+                    history: this.history,
+                    weeklyPlan: this.weeklyPlan,
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                const jsonStr = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `food_backup_${new Date().toISOString().slice(0, 10)}.json`;
+                
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                setTimeout(() => URL.revokeObjectURL(url), 100);
+                
+                this.showDataMenu = false;
+                
+                setTimeout(() => {
+                    alert('✅ 导出成功！\n\n文件名: food_backup_' + new Date().toISOString().slice(0, 10) + '.json\n\niOS用户保存到iCloud:\n1. 打开"文件"应用\n2. 点击"下载"\n3. 找到刚下载的文件\n4. 长按文件 → 移动\n5. 选择"iCloud Drive"');
+                }, 300);
+            } catch (error) {
+                console.error('导出失败:', error);
+                alert('❌ 导出失败，请尝试"复制数据"功能');
+            }
+        },
+        shareData() {
+            try {
+                const data = {
+                    inventory: this.inventory,
+                    dishes: this.dishes,
+                    shoppingList: this.shoppingList,
+                    toBuyList: this.toBuyList,
+                    todayBuyList: this.todayBuyList,
+                    history: this.history,
+                    weeklyPlan: this.weeklyPlan,
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+                const jsonStr = JSON.stringify(data, null, 2);
+                
+                if (navigator.share) {
+                    const blob = new Blob([jsonStr], { type: 'application/json' });
+                    const file = new File([blob], `food_backup_${new Date().toISOString().slice(0, 10)}.json`, { 
+                        type: 'application/json',
+                        lastModified: Date.now()
+                    });
+                    
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        navigator.share({
+                            files: [file],
+                            title: '食物库存数据备份',
+                            text: '我的食物库存管理数据'
+                        }).then(() => {
+                            this.showDataMenu = false;
+                        }).catch((error) => {
+                            if (error.name !== 'AbortError') {
+                                console.log('分享失败:', error);
+                                this.showCopyOption();
+                            }
+                        });
+                    } else {
+                        navigator.share({
+                            title: '食物库存数据备份',
+                            text: jsonStr
+                        }).then(() => {
+                            this.showDataMenu = false;
+                            alert('数据已复制为文本。您可以粘贴到备忘录或其他应用中保存。');
+                        }).catch((error) => {
+                            if (error.name !== 'AbortError') {
+                                this.showCopyOption();
+                            }
+                        });
+                    }
+                } else {
+                    this.showCopyOption();
+                }
+            } catch (error) {
+                console.error('分享失败:', error);
+                this.showCopyOption();
+            }
+        },
+        showCopyOption() {
+            if (confirm('您的浏览器不支持直接分享。\n\n是否复制数据到剪贴板？\n然后您可以粘贴到备忘录或文件中保存。')) {
+                this.copyDataToClipboard();
+            } else {
+                this.exportData();
+            }
+        },
+        copyDataToClipboard() {
+            try {
+                const data = {
+                    inventory: this.inventory,
+                    dishes: this.dishes,
+                    shoppingList: this.shoppingList,
+                    toBuyList: this.toBuyList,
+                    todayBuyList: this.todayBuyList,
+                    history: this.history,
+                    weeklyPlan: this.weeklyPlan,
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+                const jsonStr = JSON.stringify(data, null, 2);
+                
+                navigator.clipboard.writeText(jsonStr).then(() => {
+                    this.showDataMenu = false;
+                    alert('✅ 数据已复制到剪贴板！\n\n保存步骤：\n1. 打开"备忘录"应用\n2. 新建备忘录\n3. 长按粘贴\n4. 保存备忘录\n\n或者：\n1. 打开"文件"应用\n2. 新建文本文件\n3. 粘贴数据\n4. 保存到iCloud Drive');
+                }).catch((error) => {
+                    console.error('复制失败:', error);
+                    alert('❌ 复制失败。请尝试"导出备份文件"功能。');
+                });
+            } catch (error) {
+                console.error('复制失败:', error);
+                alert('❌ 操作失败');
+            }
+        },
+        importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    this.processImportData(data);
+                } catch (err) {
+                    console.error('导入错误:', err);
+                    alert('❌ 导入失败：文件格式不正确。\n\n请确保导入的是正确的JSON备份文件。');
+                }
+            };
+            reader.readAsText(file);
+            this.showDataMenu = false;
+            event.target.value = '';
+        },
+        importFromClipboard() {
+            if (!navigator.clipboard || !navigator.clipboard.readText) {
+                alert('❌ 您的浏览器不支持从剪贴板读取。\n\n请使用"从文件导入"功能。');
+                return;
+            }
+            
+            navigator.clipboard.readText().then(text => {
+                try {
+                    const data = JSON.parse(text);
+                    this.processImportData(data);
+                } catch (err) {
+                    console.error('导入错误:', err);
+                    alert('❌ 导入失败：剪贴板内容格式不正确。\n\n请确保：\n1. 已从备忘录复制完整的数据\n2. 数据格式正确（JSON格式）\n3. 没有遗漏任何字符');
+                }
+            }).catch(err => {
+                console.error('读取剪贴板失败:', err);
+                alert('❌ 无法读取剪贴板。\n\n请确保：\n1. 已允许浏览器访问剪贴板\n2. 剪贴板中有内容\n\n或使用"从文件导入"功能。');
+            });
+        },
+        processImportData(data) {
+            try {
+                let imported = 0;
+                
+                if (data.inventory) {
+                    this.inventory = data.inventory;
+                    imported++;
+                }
+                if (data.dishes) {
+                    this.dishes = data.dishes;
+                    imported++;
+                }
+                if (data.shoppingList) {
+                    this.shoppingList = data.shoppingList;
+                    imported++;
+                }
+                if (data.toBuyList) {
+                    this.toBuyList = data.toBuyList;
+                    imported++;
+                }
+                if (data.todayBuyList) {
+                    this.todayBuyList = data.todayBuyList;
+                    imported++;
+                }
+                if (data.history) {
+                    this.history = data.history;
+                    imported++;
+                }
+                if (data.weeklyPlan) {
+                    this.weeklyPlan = data.weeklyPlan;
+                    imported++;
+                }
+                
+                this.saveData();
+                this.showDataMenu = false;
+                
+                const exportDate = data.exportDate ? new Date(data.exportDate).toLocaleString('zh-CN') : '未知';
+                alert(`✅ 导入成功！\n\n导入了 ${imported} 个数据类别\n备份时间: ${exportDate}\n\n数据已恢复：\n• 库存: ${this.inventory.length} 项\n• 菜品: ${this.dishes.length} 个\n• 清单: ${this.shoppingList.length} 项\n• 本周菜单: ${this.weeklyPlan.thisWeek.length} 个\n• 下周菜单: ${this.weeklyPlan.nextWeek.length} 个`);
+            } catch (err) {
+                console.error('处理数据失败:', err);
+                alert('❌ 数据处理失败：' + err.message);
+            }
+        },
+        clearAllData() {
+            if (confirm("确定要清空所有数据吗？此操作不可恢复！")) {
+                localStorage.clear();
+                this.inventory = [];
+                this.dishes = [];
+                this.shoppingList = [];
+                this.toBuyList = [];
+                this.todayBuyList = [];
+                this.history = [];
+                this.weeklyPlan = { thisWeek: [], nextWeek: [] };
+                this.showDataMenu = false;
+                alert("所有数据已清空。");
+            }
+        },
+        saveData() {
+            localStorage.setItem('food_inventory', JSON.stringify(this.inventory));
+            localStorage.setItem('food_dishes', JSON.stringify(this.dishes));
+            localStorage.setItem('food_weekly_plan', JSON.stringify(this.weeklyPlan));
+            localStorage.setItem('food_history', JSON.stringify(this.history));
+            localStorage.setItem('food_shopping', JSON.stringify(this.shoppingList));
+            localStorage.setItem('food_tobuy', JSON.stringify(this.toBuyList));
+            localStorage.setItem('food_today_buy', JSON.stringify(this.todayBuyList));
+        },
+        loadData() {
+            const keys = ['inventory', 'dishes', 'weeklyPlan', 'history', 'shoppingList', 'toBuyList', 'todayBuyList'];
+            const storageKeys = ['inventory', 'dishes', 'weekly_plan', 'history', 'shopping', 'tobuy', 'today_buy'];
+            
+            keys.forEach((key, index) => {
+                const fullKey = `food_${storageKeys[index]}`;
+                const saved = localStorage.getItem(fullKey);
+                if (saved) {
+                    try {
+                        this[key] = JSON.parse(saved);
+                    } catch (e) {}
+                }
+            });
+        }
+    },
+    mounted() {
+        // 自动加载上次保存的数据
+        this.loadData();
+        console.log('数据已自动加载');
+        
+        // 监听页面关闭/刷新事件，自动保存
+        window.addEventListener('beforeunload', (e) => {
+            this.saveData();
+            console.log('数据已自动保存');
+        });
+        
+        // iPad优化：监听页面可见性变化（切换应用时自动保存）
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // 页面进入后台时自动保存
+                this.saveData();
+                console.log('应用进入后台，数据已自动保存');
+            } else {
+                // 页面返回前台时自动加载最新数据
+                this.loadData();
+                console.log('应用返回前台，数据已自动加载');
+            }
+        });
+        
+        // iPad优化：定期自动保存（每30秒）
+        this.autoSaveInterval = setInterval(() => {
+            this.saveData();
+            console.log('定期自动保存完成');
+        }, 30000); // 30秒
+    },
+    beforeUnmount() {
+        // 清理定时器
+        if (this.autoSaveInterval) {
+            clearInterval(this.autoSaveInterval);
+        }
+        // 最后保存一次
+        this.saveData();
+    }
+}).mount('#app');
+</script>
+</body>
+</html>
